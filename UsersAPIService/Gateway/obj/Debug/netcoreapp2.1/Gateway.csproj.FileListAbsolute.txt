@@ -1,0 +1,3 @@
+C:\Users\cappy\Documents\GitHub\RSOI_CourseWork\UsersAPIService\Gateway\obj\Debug\netcoreapp2.1\Gateway.csproj.CoreCompileInputs.cache
+C:\Users\cappy\Documents\GitHub\RSOI_CourseWork\UsersAPIService\Gateway\obj\Debug\netcoreapp2.1\Gateway.AssemblyInfoInputs.cache
+C:\Users\cappy\Documents\GitHub\RSOI_CourseWork\UsersAPIService\Gateway\obj\Debug\netcoreapp2.1\Gateway.AssemblyInfo.cs

@@ -1,0 +1,15 @@
+C:\Users\cappy\Documents\GitHub\RSOI_CourseWork\UsersAPIService\BookingsAPIService\obj\Debug\netcoreapp2.1\BookingsAPIService.csproj.CoreCompileInputs.cache
+C:\Users\cappy\Documents\GitHub\RSOI_CourseWork\UsersAPIService\BookingsAPIService\obj\Debug\netcoreapp2.1\BookingsAPIService.AssemblyInfoInputs.cache
+C:\Users\cappy\Documents\GitHub\RSOI_CourseWork\UsersAPIService\BookingsAPIService\obj\Debug\netcoreapp2.1\BookingsAPIService.AssemblyInfo.cs
+C:\Users\cappy\Documents\GitHub\RSOI_CourseWork\UsersAPIService\BookingsAPIService\bin\Debug\netcoreapp2.1\BookingsAPIService.deps.json
+C:\Users\cappy\Documents\GitHub\RSOI_CourseWork\UsersAPIService\BookingsAPIService\bin\Debug\netcoreapp2.1\BookingsAPIService.runtimeconfig.json
+C:\Users\cappy\Documents\GitHub\RSOI_CourseWork\UsersAPIService\BookingsAPIService\bin\Debug\netcoreapp2.1\BookingsAPIService.runtimeconfig.dev.json
+C:\Users\cappy\Documents\GitHub\RSOI_CourseWork\UsersAPIService\BookingsAPIService\bin\Debug\netcoreapp2.1\BookingsAPIService.dll
+C:\Users\cappy\Documents\GitHub\RSOI_CourseWork\UsersAPIService\BookingsAPIService\bin\Debug\netcoreapp2.1\BookingsAPIService.pdb
+C:\Users\cappy\Documents\GitHub\RSOI_CourseWork\UsersAPIService\BookingsAPIService\obj\Debug\netcoreapp2.1\BookingsAPIService.csprojAssemblyReference.cache
+C:\Users\cappy\Documents\GitHub\RSOI_CourseWork\UsersAPIService\BookingsAPIService\obj\Debug\netcoreapp2.1\BookingsAPIService.RazorAssemblyInfo.cache
+C:\Users\cappy\Documents\GitHub\RSOI_CourseWork\UsersAPIService\BookingsAPIService\obj\Debug\netcoreapp2.1\BookingsAPIService.RazorAssemblyInfo.cs
+C:\Users\cappy\Documents\GitHub\RSOI_CourseWork\UsersAPIService\BookingsAPIService\obj\Debug\netcoreapp2.1\UserSecretsAssemblyInfo.cs
+C:\Users\cappy\Documents\GitHub\RSOI_CourseWork\UsersAPIService\BookingsAPIService\obj\Debug\netcoreapp2.1\BookingsAPIService.RazorTargetAssemblyInfo.cache
+C:\Users\cappy\Documents\GitHub\RSOI_CourseWork\UsersAPIService\BookingsAPIService\obj\Debug\netcoreapp2.1\BookingsAPIService.dll
+C:\Users\cappy\Documents\GitHub\RSOI_CourseWork\UsersAPIService\BookingsAPIService\obj\Debug\netcoreapp2.1\BookingsAPIService.pdb
