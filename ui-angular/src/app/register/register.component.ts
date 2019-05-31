@@ -23,7 +23,8 @@ export class RegisterComponent implements OnInit {
             surname: ['', Validators.required],
 			dateOfBirth: ['', Validators.required],
 			email: ['', Validators.required],
-            password: ['', [Validators.required, Validators.minLength(6)]]
+            password: ['', [Validators.required, Validators.minLength(6)]],
+			passwordConfirm: ['', [Validators.required, Validators.minLength(6)]]
         });
     }
 
@@ -37,7 +38,6 @@ export class RegisterComponent implements OnInit {
         if (this.registerForm.invalid) {
             return;
         }
-
         this.loading = true;
         this.userService.register(this.registerForm.value)
             .pipe(first())
@@ -47,7 +47,7 @@ export class RegisterComponent implements OnInit {
                     this.router.navigate(['/login']);
                 },
                 error => {
-					console.log(error);
+					//console.log(error);
                     this.alertService.error(error.error.message);
                     this.loading = false;
                 });

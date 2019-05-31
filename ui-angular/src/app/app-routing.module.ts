@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { HomeComponent } from './home/home.component';
 import { CustomersComponent } from './customers/customers.component';
-import { RoomsComponent } from './rooms/rooms.component';
+import { AdsComponent } from './ads/ads.component';
 import { BookingsComponent } from './bookings/bookings.component';
 
 import { AccountComponent } from './account';
@@ -14,9 +14,10 @@ import { HttpClientModule } from '@angular/common/http';
 import { HttpModule } from '@angular/http';
 
 const routes: Routes = [
-  { path: '', component: HomeComponent, canActivate: [AuthGuard] },
+  { path: '', component: AdsComponent, canActivate: [AuthGuard] },
+ // { path: '', component: HomeComponent, canActivate: [AuthGuard] },
   { path: 'customers', component: CustomersComponent, canActivate: [AuthGuard] },
-  { path: 'rooms', component: RoomsComponent, canActivate: [AuthGuard] },
+  { path: 'ads', component: AdsComponent, canActivate: [AuthGuard] },
   { path: 'bookings', component: BookingsComponent, canActivate: [AuthGuard] },
   //{ path: 'booking', component: BookingsComponent, canActivate: [AuthGuard] },
   

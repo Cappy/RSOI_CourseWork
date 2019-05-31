@@ -39,6 +39,10 @@ namespace UsersAPIService.Controllers
         [HttpPost("register")]
         public IActionResult Register([FromBody]UserDto userDto)
         {
+            if (userDto.Password.ToString() != userDto.PasswordConfirm.ToString())
+            {
+                return BadRequest(new { message = "Password and confiramtion of password must be the same." });
+            }
 
             Guid id = Guid.NewGuid();
             userDto.Userid = id;

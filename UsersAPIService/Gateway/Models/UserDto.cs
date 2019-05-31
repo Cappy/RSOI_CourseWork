@@ -12,6 +12,7 @@ namespace Gateway.Models
         public string Surname { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
+        public string PasswordConfirm { get; set; }
         public DateTime? DateOfBirth { get; set; }
         public DateTime? CreatedAt { get; set; }
         public bool IsAdmin { get; set; }

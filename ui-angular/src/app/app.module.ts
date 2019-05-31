@@ -7,7 +7,7 @@ import { AppComponent } from './app.component';
 import { NavComponent } from './nav/nav.component';
 import { CustomersComponent } from './customers/customers.component';
 import { HomeComponent } from './home/home.component';
-import { RoomsComponent } from './rooms/rooms.component';
+import { AdsComponent } from './ads/ads.component';
 import { BookingsComponent } from './bookings/bookings.component';
 
 import { HttpClientModule } from '@angular/common/http';
@@ -39,7 +39,7 @@ import { RegisterComponent } from './register';
     NavComponent,
     CustomersComponent,
     HomeComponent,
-    RoomsComponent,
+    AdsComponent,
     BookingsComponent,
 	AlertComponent,
     AccountComponent,
