@@ -34,7 +34,8 @@ namespace BookingsAPIService.Controllers
             int pageNumber = (page ?? 1);
             int pageSize = (size ?? 1);
 
-            return _context.Booking.ToPagedList(pageNumber, pageSize);
+            return _context.Booking.ToPagedList(pageNumber, pageSize).Distinct()
+            .OrderByDescending(d => d.CreatedAt).ThenByDescending(d => d.ArrivalDate);
         }
 
         // GET: api/Bookings/5
@@ -57,10 +58,19 @@ namespace BookingsAPIService.Controllers
         }
 
         // GET bookings by room ID
-        [HttpGet("getbyroomid/{id}")]
+        [HttpGet("get-bookings-by-adid/{id}")]
         public IEnumerable<Booking> GetByRoomID([FromRoute] Guid id)
         {
-            return _context.Booking.Where(m => m.Adid == id);
+            return _context.Booking.Where(m => m.Adid == id).Distinct()
+            .OrderByDescending(d => d.CreatedAt).ThenByDescending(d => d.ArrivalDate);
+        }
+
+        // GET all bookings of user
+        [HttpGet("get-bookings-by-userid/{id}")]
+        public IEnumerable<Booking> GetBookingsOfUser([FromRoute] Guid id)
+        {
+            return _context.Booking.Where(m => m.Userid == id).Distinct()
+            .OrderByDescending(d => d.CreatedAt).ThenByDescending(d => d.ArrivalDate);
         }
 
         // PUT: api/Bookings/5

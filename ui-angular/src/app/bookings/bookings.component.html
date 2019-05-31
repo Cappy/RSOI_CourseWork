@@ -1,0 +1,171 @@
+<div *ngIf="bookinginfo" class="alert alert-info alert-dismissible" role="alert">
+<button type="button" class="close" (click)="bookinginfo = false;" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <h2>Бронь {{bookingFull.bookingId}}</h2>
+	<div class="row">
+	<div class="col-xs-6">
+        <p><b>ID пользователя:</b> {{bookingFull.customer.customerId}}</p>
+	</div>
+	<div class="col-xs-6">
+        <p><b>ID комнаты:</b> {{bookingFull.room.roomId}}</p>
+	</div>
+	</div>
+	<div class="row">
+	<div class="col-xs-6">
+		<p><b>Имя и фамилия:</b> {{bookingFull.customer.name}} {{bookingFull.customer.surname}}</p>
+	</div>
+	<div class="col-xs-6">
+        <p><b>Номер комнаты:</b> {{bookingFull.room.number}}</p>
+	</div>
+	</div>
+	<div class="row">
+	<div class="col-xs-6">
+        <p><b>Номер телефона:</b> {{bookingFull.customer.phoneNumber}}</p>
+	</div>
+	<div class="col-xs-6">
+        <p><b>Цена:</b> {{bookingFull.room.cost}} ₽</p>
+	</div>
+	</div>
+</div>
+
+<div *ngIf="tableMode; else create">
+<h2>Список броней</h2>
+
+<div class="container">
+<div class="row">
+<div class="col-md-3">
+<a class="btn btn-default btn-sm" (click)="add()" role="button"><span class="glyphicon glyphicon glyphicon-plus"></span> Добавить запись</a>
+</div>
+<div class="col-md-3">
+<label>Записей на странице:</label>
+</div>
+	<div class="col-md-3">
+		<input onkeydown="if (event.keyCode == 8) event.preventDefault();" onkeypress="return event.charCode > 48;" class="form-control" [(ngModel)]="size" type="number" min="1" max="50">
+	</div>
+	<div class="col-md-3">
+	<a class="btn btn-default btn-sm" (click)="loadBookings()" role="button"><span class="glyphicon glyphicon glyphicon-ok"></span> Применить</a>
+	</div>
+</div> 
+</div>  
+
+<table *ngIf="tableMode; else create" class="table table-striped">
+    <thead>
+        <tr>
+			<td><b>ID брони</b></td>
+            <td><b>Номер комнаты</b></td>
+            <td><b>Гость</b></td>
+            <td></td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let b of bookings | paginate: { itemsPerPage: size, currentPage: page, totalItems: bookingsCount } | orderBy: 'number'">
+            <ng-template [ngIf]="booking?.bookingId != b.bookingId" [ngIfElse]="edit">
+				<td class="col-md-2"><a [routerLink]="['/bookings', b.bookingId]" (click)="getFullBookingInfo(b);" class="nav-link">{{b?.bookingId}}</a></td>
+                <td class="col-md-2">{{b?.room.number}}</td>
+                <td class="col-md-2">{{b?.customer.name}} {{b?.customer.surname}}</td>
+                <td class="col-md-2">	
+					<a class="btn btn-warning btn-xs btn-space" (click)="editBooking(b)" role="button"><span class="glyphicon glyphicon-pencil"></span> Изменить</a>
+					<a class="btn btn-danger btn-xs" (click)="deleteSwal.show()" role="button"><span class="glyphicon glyphicon-remove"></span> Удалить</a>	
+					<swal
+						#deleteSwal
+						title = "Удалить бронь комнаты №{{b?.room.number}}?"
+						text="Это нельзя будет отменить."
+						type="warning"
+						[showCancelButton]="true"
+						[focusCancel]="true"
+						(confirm)="delete(b)"
+						(cancel)="cancel()">
+						
+					</swal>
+                </td>
+            </ng-template>
+        </tr>
+    </tbody>
+</table>
+
+<div class="text-center">
+<pagination-controls 
+	previousLabel="Назад"
+    nextLabel="Вперёд"
+	(pageChange)="page = $event; ngOnInit();">
+</pagination-controls>     
+</div>        
+
+</div>
+ 
+<!--шаблон для редактирования-->
+<ng-template #edit>
+	
+	<td class="col-md-2">{{booking?.bookingId}}</td>
+	
+    <td class="col-md-2">		
+		<select class="form-control" [(ngModel)]="booking.roomId">
+		<option *ngFor="let r of rooms" [ngValue]="r.roomId">{{r.number}}</option>
+		</select>
+		
+    </td>
+    <td class="col-md-2">
+        <select class="form-control" [(ngModel)]="booking.customerId">
+		<option *ngFor="let c of customers" [ngValue]="c.customerId">{{c.name}} {{c.surname}}</option>
+		</select>
+    </td>
+    <td>
+		<button type="button" (click)="save();" class="btn btn-success btn-xs btn-space" aria-label="my button" style="border: 0px">
+		<span class="glyphicon glyphicon-ok" style="color:#ffffff; font-size: 12px;" aria-hidden="true"></span>
+		Сохранить
+		</button>
+		<a class="btn btn-danger btn-xs" (click)="cancel()" role="button"><span class="glyphicon glyphicon-remove"></span> Отмена</a>
+    </td>
+
+</ng-template>
+
+		<swal
+			#saveSwal
+			title = "Успешно"
+			type="success">						
+		</swal>
+<swal
+	#errorSwal
+	title = "Ошибка"
+	text = "{{errorMsg}}"
+	type="error">
+<ng-container *swalPartial="swalTargets.text">
+<div style="display: table; margin: 0 auto;">{{errorMsg}}</div>
+</ng-container>	
+</swal>  
+ 
+<!--шаблон для добавления-->
+<ng-template #create>
+<div class="form-horizontal">
+<h2>Добавление брони</h2>
+<br>
+    <div class="form-group">
+        <label class="col-md-3">Номер комнаты</label>
+		<div class="col-md-3">
+		<select class="form-control" [(ngModel)]="booking.roomId">
+		<option *ngFor="let r of rooms" [ngValue]="r.roomId">{{r.number}}</option>
+		</select>
+		</div>
+    </div>
+    <div class="form-group">
+        <label class="col-md-3">Гость</label>
+		<div class="col-md-3">
+        <select class="form-control" [(ngModel)]="booking.customerId">
+		<option *ngFor="let c of customers" [ngValue]="c.customerId">{{c.name}} {{c.surname}}</option>
+		</select>
+		</div>
+    </div>
+	
+	<div class="form-group">
+		<div class="col-md-3"></div>
+        <div class="col-md-3">
+            <input type="button"  [disabled]="number.invalid || cost.invalid" value="Сохранить" (click)="save(); saveSwal.show();" class="btn btn-success" />
+        </div>
+    </div>
+<!-- </form> -->
+	
+	<div>
+    <a class="btn btn-default btn-sm" (click)="cancel()" role="button"><span class="glyphicon glyphicon-chevron-left"></span> Вернуться к списку</a>
+	</div>
+	
+</div>
+</ng-template>

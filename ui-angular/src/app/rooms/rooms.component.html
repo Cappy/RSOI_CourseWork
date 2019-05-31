@@ -1,0 +1,135 @@
+<div *ngIf="tableMode; else create">
+<h2>Список комнат</h2>
+
+<div class="container">
+<div class="row">
+<div class="col-md-3">
+<a class="btn btn-default btn-sm" (click)="add()" role="button"><span class="glyphicon glyphicon glyphicon-plus"></span> Добавить запись</a>
+</div>
+<div class="col-md-3">
+<label>Записей на странице:</label>
+</div>
+	<div class="col-md-3">
+		<input onkeydown="if (event.keyCode == 8) event.preventDefault();" onkeypress="return event.charCode > 48;" class="form-control" [(ngModel)]="size" type="number" min="1" max="50">
+	</div>
+	<div class="col-md-3">
+	<a class="btn btn-default btn-sm" (click)="loadRooms()" role="button"><span class="glyphicon glyphicon glyphicon-ok"></span> Применить</a>
+	</div>
+</div> 
+</div>  
+
+<table *ngIf="tableMode; else create" class="table table-striped">
+    <thead>
+        <tr>
+            <td><b>Номер</b></td>
+            <td><b>Цена</b></td>
+            <td></td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let r of rooms | paginate: { itemsPerPage: size, currentPage: page, totalItems: roomsCount } | orderBy: 'number'">
+            <ng-template [ngIf]="room?.roomId != r.roomId" [ngIfElse]="edit">
+                <td class="col-md-2">{{r?.number}}</td>
+                <td class="col-md-2">{{r?.cost}} ₽</td>
+                <td class="col-md-2">	
+					<a class="btn btn-warning btn-xs btn-space" (click)="editRoom(r)" role="button"><span class="glyphicon glyphicon-pencil"></span> Изменить</a>
+					<!-- (click)="delete(c)" -->
+					<a class="btn btn-danger btn-xs" (click)="deleteSwal.show()" role="button"><span class="glyphicon glyphicon-remove"></span> Удалить</a>	
+					<swal
+						#deleteSwal
+						title = "Удалить комнату №{{r?.number}}?"
+						text="Это нельзя будет отменить."
+						type="warning"
+						[showCancelButton]="true"
+						[focusCancel]="true"
+						(confirm)="delete(r)"
+						(cancel)="cancel()">
+						
+					</swal>
+                </td>
+            </ng-template>
+        </tr>
+    </tbody>
+</table>
+
+<div class="text-center">
+<pagination-controls 
+	previousLabel="Назад"
+    nextLabel="Вперёд"
+	(pageChange)="page = $event; ngOnInit();">
+</pagination-controls>     
+</div>        
+
+</div>
+ 
+<!--шаблон для редактирования-->
+<ng-template #edit>
+
+    <td class="col-md-2">
+        <input type="text" name="number" [(ngModel)]="room.number" class="form-control" #number="ngModel" required pattern="[0-9]+"/>
+    </td>
+    <td class="col-md-2">
+        <input type="text" name="cost" [(ngModel)]="room.cost" class="form-control" #cost="ngModel" required pattern="[0-9.]+" />
+    </td>
+    <td>
+		<button type="button"  [disabled]="number.invalid || cost.invalid" (click)="save();" class="btn btn-success btn-xs btn-space" aria-label="my button" style="border: 0px">
+		<span class="glyphicon glyphicon-ok" style="color:#ffffff; font-size: 12px;" aria-hidden="true"></span>
+		Сохранить
+		</button>
+		<a class="btn btn-danger btn-xs" (click)="cancel()" role="button"><span class="glyphicon glyphicon-remove"></span> Отмена</a>
+    </td>
+
+</ng-template>
+
+		<swal
+			#saveSwal
+			title = "Успешно"
+			type="success">						
+		</swal>
+<swal
+	#errorSwal
+	title = "Ошибка"
+	text = "{{errorMsg}}"
+	type="error">
+<ng-container *swalPartial="swalTargets.text">
+<div style="display: table; margin: 0 auto;">{{errorMsg}}</div>
+</ng-container>	
+ 
+<!--шаблон для добавления-->
+<ng-template #create>
+<div class="form-horizontal">
+<h2>Добавление комнаты</h2>
+<br>
+    <div class="form-group">
+        <label class="col-md-3">Номер</label>
+		<div class="col-md-3">
+        <input type="text" name="number" [(ngModel)]="room.number" class="form-control" #number="ngModel" required pattern="[0-9]+" />
+			<div [hidden]="number.valid || number.untouched" class="alert alert-danger">
+                Номер не указан или указан неверно. Используйте только цифры.
+            </div>
+		</div>
+    </div>
+    <div class="form-group">
+        <label class="col-md-3">Цена (₽)</label>
+		<div class="col-md-3">
+        <input type="text" name="cost" [(ngModel)]="room.cost" class="form-control" #cost="ngModel" required pattern="[0-9.]+"/>
+			<div [hidden]="cost.valid || cost.untouched" class="alert alert-danger">
+                Цена не указана или указана неверно. Для десятичных дробей используйте точку.
+            </div>
+		</div>
+    </div>
+	
+	<div class="form-group">
+		<div class="col-md-3"></div>
+        <div class="col-md-3">
+            <input type="button"  [disabled]="number.invalid || cost.invalid" value="Сохранить" (click)="save();" class="btn btn-success" />
+        </div>
+    </div>
+<!-- </form> -->
+	
+	<div>
+    <a class="btn btn-default btn-sm" (click)="cancel()" role="button"><span class="glyphicon glyphicon-chevron-left"></span> Вернуться к списку</a>
+	</div>
+	
+</div>
+</ng-template>

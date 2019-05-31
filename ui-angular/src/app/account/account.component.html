@@ -1,0 +1,26 @@
+﻿<h1>Привет, {{currentUser.username}}!</h1>
+<!-- <h3>Все пользователи:</h3> -->
+<!-- <ul> -->
+    <!-- <li *ngFor="let user of users"> -->
+        <!-- {{user.username}} ({{user.firstName}} {{user.lastName}}) -->
+        <!-- - <a (click)="deleteUser(user.userId)" class="text-danger">Delete</a> -->
+    <!-- </li> -->
+<!-- </ul> -->
+    <!-- <div class="form-group"> -->
+        <!-- <label class="col-md-3">OAuth 2 Token:</label> -->
+		<!-- <div class="col-md-9"> -->
+        <!-- <input type="text" name="name" [(ngModel)]="OAuth2Token" class="form-control" #name="ngModel" /> -->
+		<!-- </div> -->
+    <!-- </div> -->
+
+	<div class="form-group">
+        <div class="col-md-3">
+    <p><a [routerLink]="['/login']">Logout</a></p>
+	</div>
+	</div>
+	<!-- <div class="form-group"> -->
+        <!-- <div class="col-md-3"> -->
+    <!-- <a class="btn btn-default" (click)="getToken(this.currentUser)" role="button"> GET</a> -->
+	<!-- </div> -->
+	<!-- </div> -->
+

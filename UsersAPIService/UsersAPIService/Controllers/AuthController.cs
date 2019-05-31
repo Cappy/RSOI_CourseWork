@@ -12,6 +12,8 @@ using UsersAPIService.Models; // класс Users
 using UsersAPIService.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using AutoMapper;
+using System.Security.Principal;
+using System.Text;
 
 namespace UsersAPIService.Controllers
 {
@@ -58,15 +60,17 @@ namespace UsersAPIService.Controllers
         }
 
         [AllowAnonymous]
-        [HttpPost("/token")]
-        public async Task Token(string Email, string Password)
+        [HttpPost("authenticate")]
+        public async Task Authenticate([FromBody] UserDto user)
         {
 
-            var identity = GetIdentity(Email, Password);
+            var identity = GetIdentity(user.Email, user.Password);
+            var userRoles = GetRoles(user.Email, user.Password);
+
             if (identity == null)
             {
                 Response.StatusCode = 400;
-                await Response.WriteAsync("Invalid username or password.");
+                await Response.WriteAsync("Invalid email or password.");
                 return;
             }
 
@@ -85,18 +89,42 @@ namespace UsersAPIService.Controllers
             {
                 access_token = encodedJwt,
                 userid = identity.Name,
-                roles = identity.Claims
-                
+                email = user.Email,
+                roles = userRoles
             };
 
             // сериализация ответа
-            //Response.ContentType = "application/json";
+            Response.ContentType = "application/json";
             await Response.WriteAsync(JsonConvert.SerializeObject(response, new JsonSerializerSettings()
             {
-                Formatting = Formatting.Indented,
+                //Formatting = Formatting.Indented,
                 ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
             }));
         }
+
+        //[HttpPost("validate")]
+        //public bool ValidateToken(string authToken)
+        //{
+        //    var tokenHandler = new JwtSecurityTokenHandler();
+        //    var validationParameters = GetValidationParameters();
+
+        //    SecurityToken validatedToken;
+        //    IPrincipal principal = tokenHandler.ValidateToken(authToken, validationParameters, out validatedToken);
+        //    return true;
+        //}
+
+        //private TokenValidationParameters GetValidationParameters()
+        //{
+        //    return new TokenValidationParameters()
+        //    {
+        //        ValidateLifetime = true, // Because there is no expiration in the generated token
+        //        ValidateAudience = true, // Because there is no audiance in the generated token
+        //        ValidateIssuer = true,   // Because there is no issuer in the generated token
+        //        ValidIssuer = AuthOptions.ISSUER,
+        //        ValidAudience = AuthOptions.AUDIENCE,
+        //        IssuerSigningKey = new SymmetricSecurityKey(AuthOptions.GetKey()) // The same key as the one that generate the token
+        //    };
+        //}
 
         private ClaimsIdentity GetIdentity(string Email, string Password)
         {
@@ -109,8 +137,6 @@ namespace UsersAPIService.Controllers
 
             if (user != null)
             {
-
-
                 var claims = new List<Claim>();
 
                 claims.Add(new Claim(ClaimsIdentity.DefaultNameClaimType, user.Userid.ToString()));
@@ -141,6 +167,40 @@ namespace UsersAPIService.Controllers
                 new ClaimsIdentity(claims, "Token", ClaimsIdentity.DefaultNameClaimType,
                     ClaimsIdentity.DefaultRoleClaimType);
                 return claimsIdentity;
+            }
+
+            // если пользователя не найдено
+            return null;
+        }
+
+        private List<string> GetRoles(string Email, string Password)
+        {
+
+            if (string.IsNullOrEmpty(Email) || string.IsNullOrEmpty(Password))
+                return null;
+
+            var user = _context.Users.SingleOrDefault(x => x.Email == Email);
+
+            if (user != null)
+            {
+                var roles = new List<string>();
+
+                if (user.IsAdmin)
+                {
+                    roles.Add("Admin");
+                }
+
+                if (user.IsRentlord)
+                {
+                    roles.Add("Rentlord");
+                }
+
+                if (!user.IsAdmin && !user.IsRentlord)
+                {
+                    roles.Add("User");
+                }
+
+                return roles;
             }
 
             // если пользователя не найдено
@@ -183,6 +243,7 @@ namespace UsersAPIService.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public IActionResult Delete(Guid id)
         {
