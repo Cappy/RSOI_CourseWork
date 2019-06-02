@@ -12,7 +12,7 @@ using Microsoft.Extensions.Logging;
 namespace AdsAPIService.Controllers
 {
     [Produces("application/json")]
-    [Route("api/Ads")]
+    [Route("api/[controller]")]
     public class AdsController : Controller
     {
         private readonly AdsContext _context;
@@ -35,7 +35,8 @@ namespace AdsAPIService.Controllers
             int pageNumber = (page ?? 1);
             int pageSize = (size ?? 1);
 
-            return _context.Ads.ToPagedList(pageNumber, pageSize);
+            return _context.Ads.ToPagedList(pageNumber, pageSize).Distinct()
+            .OrderBy(d => d.City).ThenByDescending(d => d.CreatedAt);
         }
 
         // GET: api/Ads/5
@@ -47,7 +48,7 @@ namespace AdsAPIService.Controllers
                 return BadRequest(ModelState);
             }
 
-            var Ads = await _context.Ads.SingleOrDefaultAsync(m => m.Adid == id);
+            var Ads = await _context.Ads.SingleOrDefaultAsync(m => Convert.ToString(m.Adid) == id.ToString());
 
             if (Ads == null)
             {
@@ -132,7 +133,7 @@ namespace AdsAPIService.Controllers
                 return BadRequest(ModelState);
             }
 
-            var Ads = await _context.Ads.SingleOrDefaultAsync(m => m.Adid == id);
+            var Ads = await _context.Ads.SingleOrDefaultAsync(m => Convert.ToString(m.Adid) == id.ToString());
             if (Ads == null)
             {
                 return NotFound();

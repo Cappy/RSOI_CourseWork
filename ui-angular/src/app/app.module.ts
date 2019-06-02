@@ -57,6 +57,7 @@ import { RegisterComponent } from './register';
     BrowserModule,
     AppRoutingModule,
 	FormsModule
+	
   ],
   providers: [
 	AuthGuard,

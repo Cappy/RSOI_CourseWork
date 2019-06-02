@@ -47,7 +47,7 @@ namespace UsersAPIServices.Controllers
                 return BadRequest(ModelState);
             }
 
-            var users = await _context.Users.SingleOrDefaultAsync(m => m.Userid == id);
+            var users = await _context.Users.SingleOrDefaultAsync(m => Convert.ToString(m.Userid) == id.ToString());
 
             if (users == null)
             {

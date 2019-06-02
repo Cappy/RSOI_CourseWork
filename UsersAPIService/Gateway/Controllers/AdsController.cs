@@ -184,7 +184,7 @@ namespace Gateway.Controllers
             //getting room info before deleteing
             try
             {
-                adBackup = await client.GetAsync(services.gatewayAPI + $"/ads/{id}");
+                adBackup = await client.GetAsync(services.adsAPI + $"/{id}");
                 AdBU = await adBackup.Content.ReadAsAsync<Ads>();
             }
             catch
@@ -214,11 +214,11 @@ namespace Gateway.Controllers
                 return NotFound();
             }
 
-            HttpResponseMessage bookings = null;
+            HttpResponseMessage bookingsbyadid = null;
 
             try
             {
-                bookings = await client.GetAsync(services.bookingsAPI);
+                bookingsbyadid = await client.GetAsync(services.bookingsAPI+ $"/get-bookings-by-adid/{id}");
             }
             catch
             {
@@ -230,18 +230,14 @@ namespace Gateway.Controllers
 
             }
 
-            var bk = await bookings.Content.ReadAsAsync<List<Booking>>();
+            var bk = await bookingsbyadid.Content.ReadAsAsync<List<Booking>>();
 
+            HttpResponseMessage booking;
             try
             {
                 foreach (Booking entr in bk)
                 {
-                    if (entr.Adid == id)
-                    {
-
-                        HttpResponseMessage booking = await client.DeleteAsync(services.bookingsAPI + $"/{entr.Bookingid}");
-
-                    }
+                     booking = await client.DeleteAsync(services.bookingsAPI + $"/{entr.Bookingid}");
                 }
             }
             catch

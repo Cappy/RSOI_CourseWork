@@ -4,16 +4,18 @@
 <div class="container">
 <div class="row">
 <div class="col-md-3">
-<a class="btn btn-default btn-sm" (click)="add()" role="button"><span class="glyphicon glyphicon glyphicon-plus"></span> Добавить запись</a>
+<ng-template [ngIf]="(currentUser?.roles.includes('Rentlord')) || (currentUser?.roles.includes('Admin'))">
+<a class="btn btn-default btn-sm" (click)="add()" role="button"><span class="glyphicon glyphicon glyphicon-plus"></span> New Ad</a>
+</ng-template>
 </div>
 <div class="col-md-3">
-<label>Записей на странице:</label>
+<label>Ads per page:</label>
 </div>
 	<div class="col-md-3">
 		<input onkeydown="if (event.keyCode == 8) event.preventDefault();" onkeypress="return event.charCode > 48;" class="form-control" [(ngModel)]="size" type="number" min="1" max="50">
 	</div>
 	<div class="col-md-3">
-	<a class="btn btn-default btn-sm" (click)="loadRooms()" role="button"><span class="glyphicon glyphicon glyphicon-ok"></span> Применить</a>
+	<a class="btn btn-default btn-sm" (click)="loadRooms()" role="button"><span class="glyphicon glyphicon glyphicon-ok"></span> Apply</a>
 	</div>
 </div> 
 </div>  
@@ -21,17 +23,19 @@
 <table *ngIf="tableMode;" class="table table-striped">
     <thead>
         <tr>
-            <td><b>Заголовок</b></td>
-            <td><b>Город</b></td>
-            <td><b>Тип</b></td>
-			<td><b>Что сдается</b></td>
-			<td><b>Цена</b></td>
+			<td><b></b></td>
+            <td><b>Caption</b></td>
+            <td><b>City</b></td>
+            <td><b>Type</b></td>
+			<td><b>What is for rent</b></td>
+			<td><b>Price</b></td>
             <td></td>
         </tr>
     </thead>
     <tbody>
         <tr *ngFor="let a of ads | paginate: { itemsPerPage: size, currentPage: page, totalItems: adsCount } | orderBy: 'createdAt'">
             <ng-template [ngIf]="ad?.adid != a.adid" [ngIfElse]="edit">
+				<td class="col-md-2"><a class="btn btn-warning btn-xs btn-space" role="button" (click)="fullInfo(a);" class="nav-link"><span class="glyphicon glyphicon-info-sign"></span> View ad</a></td>
                 <td class="col-md-2">{{a?.caption}}</td>
 				<td class="col-md-2">{{a?.city}}</td>
 				<td class="col-md-2">{{a?.type}}</td>
@@ -39,14 +43,14 @@
                 <td class="col-md-2">{{a?.price}} ₽</td>
                 <td class="col-md-2">	
 				<ng-template [ngIf]="(currentUser?.userid == a.userid) || (currentUser?.roles.includes('Admin'))">
-					<a class="btn btn-warning btn-xs btn-space" (click)="editad(a)" role="button"><span class="glyphicon glyphicon-pencil"></span> Изменить</a>
+					<a class="btn btn-warning btn-xs btn-space" (click)="editad(a)" role="button"><span class="glyphicon glyphicon-pencil"></span> Edit</a>
 					<!-- (click)="delete(c)" -->
-					<a class="btn btn-danger btn-xs" (click)="deleteSwal.show()" role="button"><span class="glyphicon glyphicon-remove"></span> Удалить</a>
+					<a class="btn btn-danger btn-xs" (click)="deleteSwal.show()" role="button"><span class="glyphicon glyphicon-remove"></span> Delete</a>
 				</ng-template>					
 					<swal
 						#deleteSwal
-						title = "Удалить объявление {{a?.caption}}?"
-						text="Это нельзя будет отменить."
+						title = "Delete ad {{a?.caption}}?"
+						text="This cannot be undone."
 						type="warning"
 						[showCancelButton]="true"
 						[focusCancel]="true"
@@ -60,10 +64,11 @@
     </tbody>
 </table>
 
+	<!-- previousLabel="Назад" -->
+    <!-- nextLabel="Вперёд" -->
+
 <div class="text-center">
 <pagination-controls 
-	previousLabel="Назад"
-    nextLabel="Вперёд"
 	(pageChange)="page = $event; ngOnInit();">
 </pagination-controls>     
 </div>        
@@ -73,25 +78,105 @@
 <!--шаблон для добавления-->
 <div *ngIf="createMode;">
 <div class="form-horizontal">
-<h2>Добавление комнаты</h2>
+<h2>New ad</h2>
 <br>
     <div class="form-group">
-        <label class="col-md-3">Номер</label>
+        <label class="col-md-3">Caption</label>
 		<div class="col-md-3">
         <input type="text" name="caption" [(ngModel)]="ad.caption" class="form-control" #caption="ngModel"/>
 		<br>
 			<div [hidden]="caption.valid || caption.untouched" class="alert alert-danger">
-                Номер не указан или указан неверно. Используйте только цифры.
+                Caption is not specified or is incorrect. Use only numbers.
+            </div>
+		</div>
+    </div>
+	<div class="form-group">
+        <label class="col-md-3">City</label>
+		<div class="col-md-3">
+        <input type="text" name="city" [(ngModel)]="ad.city" class="form-control" #city="ngModel"/>
+		<br>
+			<div [hidden]="city.valid || city.untouched" class="alert alert-danger">
+                City is not specified.
+            </div>
+		</div>
+    </div>
+	<div class="form-group">
+        <label class="col-md-3">Adress</label>
+		<div class="col-md-3">
+        <input type="text" name="adress" [(ngModel)]="ad.adress" class="form-control" #adress="ngModel"/>
+		<br>
+			<div [hidden]="adress.valid || adress.untouched" class="alert alert-danger">
+                Adress is not specified.
+            </div>
+		</div>
+    </div>
+	<div class="form-group">
+        <label class="col-md-3">Type (e.g. 'house' or 'flat')</label>
+		<div class="col-md-3">
+        <input type="text" name="type" [(ngModel)]="ad.type" class="form-control" #type="ngModel"/>
+		<br>
+			<div [hidden]="type.valid || type.untouched" class="alert alert-danger">
+                Type is not specified.
+            </div>
+		</div>
+    </div>
+	<div class="form-group">
+        <label class="col-md-3">What for rent (e.g. 'whole accommodation' or 'only one room')</label>
+		<div class="col-md-3">
+        <input type="text" name="whatRented" [(ngModel)]="ad.whatRented" class="form-control" #whatRented="ngModel"/>
+		<br>
+			<div [hidden]="whatRented.valid || whatRented.untouched" class="alert alert-danger">
+                Please, don't leave blank.
+            </div>
+		</div>
+    </div>
+	<div class="form-group">
+        <label class="col-md-3">Number of bedrooms</label>
+		<div class="col-md-3">
+        <input type="text" name="bedrooms" [(ngModel)]="ad.bedrooms" class="form-control" #bedrooms="ngModel" required pattern="[0-9]+"/>
+		<br>
+			<div [hidden]="bedrooms.valid || bedrooms.untouched" class="alert alert-danger">
+               Number of bedrooms is not specified or is incorrect.
+            </div>
+		</div>
+    </div>
+	<div class="form-group">
+        <label class="col-md-3">Number of beds</label>
+		<div class="col-md-3">
+        <input type="text" name="beds" [(ngModel)]="ad.beds" class="form-control" #beds="ngModel" required pattern="[0-9]+"/>
+		<br>
+			<div [hidden]="bedrooms.valid || bedrooms.untouched" class="alert alert-danger">
+               Number of beds is not specified or is incorrect.
+            </div>
+		</div>
+    </div>
+	<div class="form-group">
+        <label class="col-md-3">Number of bathrooms</label>
+		<div class="col-md-3">
+        <input type="text" name="bathrooms" [(ngModel)]="ad.bathrooms" class="form-control" #bathrooms="ngModel" required pattern="[0-9]+"/>
+		<br>
+			<div [hidden]="bathrooms.valid || bathrooms.untouched" class="alert alert-danger">
+               Number of bathrooms is not specified or is incorrect.
+            </div>
+		</div>
+    </div>
+	<div class="form-group">
+        <label class="col-md-3">Description</label>
+		<div class="col-md-3">
+        <textarea type="text" name="description" rows="3" [(ngModel)]="ad.description" class="form-control" #description="ngModel"></textarea>
+		<br>
+			<div [hidden]="description.valid || description.untouched" class="alert alert-danger">
+               Description is not specified.
             </div>
 		</div>
     </div>
     <div class="form-group">
-        <label class="col-md-3">Цена (₽)</label>
+        <label class="col-md-3">Cost per day (₽)</label>
 		<div class="col-md-3">
-        <input type="text" name="price" [(ngModel)]="ad.price" class="form-control" #price="ngModel" required pattern="[0-9.]+"/>
+        <input type="text" name="price" [(ngModel)]="ad.price" class="form-control" #price="ngModel" required pattern="[0-9]+"/>
 		<br>
 			<div [hidden]="price.valid || price.untouched" class="alert alert-danger">
-                Цена не указана или указана неверно. Для десятичных дробей используйте точку.
+                Price is not specified or is incorrect.
             </div>
 		</div>
     </div>
@@ -99,13 +184,13 @@
 	<div class="form-group">
 		<div class="col-md-3"></div>
         <div class="col-md-3">
-            <input type="button"  [disabled]="caption.invalid || price.invalid" value="Сохранить" (click)="save();" class="btn btn-success" />
+            <input type="button"  [disabled]="caption.invalid || price.invalid" value="Save" (click)="save();" class="btn btn-success" />
         </div>
     </div>
 <!-- </form> -->
 	
 	<div>
-    <a class="btn btn-default btn-sm" (click)="cancel()" role="button"><span class="glyphicon glyphicon-chevron-left"></span> Вернуться к списку</a>
+    <a class="btn btn-default btn-sm" (click)="cancel()" role="button"><span class="glyphicon glyphicon-chevron-left"></span> Return to list</a>
 	</div>
 	
 </div>
@@ -113,42 +198,107 @@
 
  
 <!--шаблон для редактирования-->
-<div *ngIf="editMode;">
-
-    <!-- <td class="col-md-2"> -->
-        <!-- <input type="text" name="number" [(ngModel)]="ad.caption" class="form-control" #number="ngModel" /> -->
-    <!-- </td> -->
-    <!-- <td class="col-md-2"> -->
-        <!-- <input type="text" name="price" [(ngModel)]="ad.price" class="form-control" #cost="ngModel" required pattern="[0-9.]+" /> -->
-    <!-- </td> -->
-    <!-- <td> -->
-		<!-- <button type="button"  [disabled]="number.invalid || cost.invalid" (click)="save();" class="btn btn-success btn-xs btn-space" aria-label="my button" style="border: 0px"> -->
-		<!-- <span class="glyphicon glyphicon-ok" style="color:#ffffff; font-size: 12px;" aria-hidden="true"></span> -->
-		<!-- Сохранить -->
-		<!-- </button> -->
-		<!-- <a class="btn btn-danger btn-xs" (click)="cancel()" role="button"><span class="glyphicon glyphicon-remove"></span> Отмена</a> -->
-    <!-- </td> -->
-	
+<div *ngIf="editMode;">	
 <div class="form-horizontal">
 <h2>Ad editing</h2>
 <br>
     <div class="form-group">
-        <label class="col-md-3">Номер</label>
+        <label class="col-md-3">Caption</label>
 		<div class="col-md-3">
-        <input type="text" name="caption" [(ngModel)]="ad.caption" class="form-control" #caption="ngModel" />
+        <input type="text" name="caption" [(ngModel)]="ad.caption" class="form-control" #caption="ngModel"/>
 		<br>
 			<div [hidden]="caption.valid || caption.untouched" class="alert alert-danger">
-                Номер не указан или указан неверно. Используйте только цифры.
+                Caption is not specified or is incorrect. Use only numbers.
+            </div>
+		</div>
+    </div>
+	<div class="form-group">
+        <label class="col-md-3">City</label>
+		<div class="col-md-3">
+        <input type="text" name="city" [(ngModel)]="ad.city" class="form-control" #city="ngModel"/>
+		<br>
+			<div [hidden]="city.valid || city.untouched" class="alert alert-danger">
+                City is not specified.
+            </div>
+		</div>
+    </div>
+	<div class="form-group">
+        <label class="col-md-3">Adress</label>
+		<div class="col-md-3">
+        <input type="text" name="adress" [(ngModel)]="ad.adress" class="form-control" #adress="ngModel"/>
+		<br>
+			<div [hidden]="adress.valid || adress.untouched" class="alert alert-danger">
+                Adress is not specified.
+            </div>
+		</div>
+    </div>
+	<div class="form-group">
+        <label class="col-md-3">Type (e.g. 'house' or 'flat')</label>
+		<div class="col-md-3">
+        <input type="text" name="type" [(ngModel)]="ad.type" class="form-control" #type="ngModel"/>
+		<br>
+			<div [hidden]="type.valid || type.untouched" class="alert alert-danger">
+                Type is not specified.
+            </div>
+		</div>
+    </div>
+	<div class="form-group">
+        <label class="col-md-3">What for rent (e.g. 'whole accommodation' or 'only one room')</label>
+		<div class="col-md-3">
+        <input type="text" name="whatRented" [(ngModel)]="ad.whatRented" class="form-control" #whatRented="ngModel"/>
+		<br>
+			<div [hidden]="whatRented.valid || whatRented.untouched" class="alert alert-danger">
+                Please, don't leave blank.
+            </div>
+		</div>
+    </div>
+	<div class="form-group">
+        <label class="col-md-3">Number of bedrooms</label>
+		<div class="col-md-3">
+        <input type="text" name="bedrooms" [(ngModel)]="ad.bedrooms" class="form-control" #bedrooms="ngModel" required pattern="[0-9]+"/>
+		<br>
+			<div [hidden]="bedrooms.valid || bedrooms.untouched" class="alert alert-danger">
+               Number of bedrooms is not specified or is incorrect.
+            </div>
+		</div>
+    </div>
+	<div class="form-group">
+        <label class="col-md-3">Number of beds</label>
+		<div class="col-md-3">
+        <input type="text" name="beds" [(ngModel)]="ad.beds" class="form-control" #beds="ngModel" required pattern="[0-9]+"/>
+		<br>
+			<div [hidden]="bedrooms.valid || bedrooms.untouched" class="alert alert-danger">
+               Number of beds is not specified or is incorrect.
+            </div>
+		</div>
+    </div>
+	<div class="form-group">
+        <label class="col-md-3">Number of bathrooms</label>
+		<div class="col-md-3">
+        <input type="text" name="bathrooms" [(ngModel)]="ad.bathrooms" class="form-control" #bathrooms="ngModel" required pattern="[0-9]+"/>
+		<br>
+			<div [hidden]="bathrooms.valid || bathrooms.untouched" class="alert alert-danger">
+               Number of bathrooms is not specified or is incorrect.
+            </div>
+		</div>
+    </div>
+	<div class="form-group">
+        <label class="col-md-3">Description</label>
+		<div class="col-md-3">
+        <textarea type="text" name="description" rows="3" [(ngModel)]="ad.description" class="form-control" #description="ngModel"></textarea>
+		<br>
+			<div [hidden]="description.valid || description.untouched" class="alert alert-danger">
+               Description is not specified.
             </div>
 		</div>
     </div>
     <div class="form-group">
-        <label class="col-md-3">Цена (₽)</label>
+        <label class="col-md-3">Cost per day (₽)</label>
 		<div class="col-md-3">
-        <input type="text" name="price" [(ngModel)]="ad.price" class="form-control" #price="ngModel" required pattern="[0-9.]+"/>
+        <input type="text" name="price" [(ngModel)]="ad.price" class="form-control" #price="ngModel" required pattern="[0-9]+"/>
 		<br>
 			<div [hidden]="price.valid || price.untouched" class="alert alert-danger">
-                Цена не указана или указана неверно. Для десятичных дробей используйте точку.
+                Price is not specified or is incorrect.
             </div>
 		</div>
     </div>
@@ -156,22 +306,144 @@
 	<div class="form-group">
 		<div class="col-md-3"></div>
         <div class="col-md-3">
-            <input type="button"  [disabled]="caption.invalid || price.invalid" value="Сохранить" (click)="save();" class="btn btn-success" />
+            <input type="button"  [disabled]="caption.invalid || price.invalid" value="Save" (click)="save();" class="btn btn-success" />
         </div>
     </div>
 <!-- </form> -->
 	
 	<div>
-    <a class="btn btn-default btn-sm" (click)="cancel()" role="button"><span class="glyphicon glyphicon-chevron-left"></span> Вернуться к списку</a>
-	</div>
-	
+    <a class="btn btn-default btn-sm" (click)="cancel()" role="button"><span class="glyphicon glyphicon-chevron-left"></span> Return to list</a>
+	</div>	
+</div>
 </div>
 
+<!-- Шаблон подробной информации -->
+<div *ngIf="fullInfoMode;">
+    <h2>{{ad.caption}}</h2>
+	<div class="row">
+	<div class="col-xs-12">
+        <p><b>Price:</b>		{{ad.price}} ₽</p>
+	</div>
+	</div>
+	<div class="row">
+	<div class="col-xs-6">
+        <p><b>City:</b>		{{ad.city}}</p>
+	</div>
+	<div class="col-xs-6">
+        <p><b>Address:</b>		{{ad.adress}}</p>
+	</div>
+	</div>
+	<div class="row">
+	<div class="col-xs-6">
+		<p><b>Type:</b>		{{ad.type}}</p>
+	</div>
+	<div class="col-xs-6">
+        <p><b>What is for rent:</b>		{{ad.whatRented}}</p>
+	</div>
+	</div>
+	<div class="row">
+	<div class="col-xs-6">
+        <p><b>Number of bedrooms:</b>		{{ad.bedrooms}}</p>
+	</div>
+	<div class="col-xs-6">
+        <p><b>Number of bathrooms:</b>		{{ad.bathrooms}}</p>
+	</div>
+	</div>
+	<div class="row">
+	<div class="col-xs-12">
+        <p><b>Description:</b>		{{ad.description}}</p>
+	</div>
+	</div>
+	<div class="row">
+	<div class="col-xs-12">
+        <p><b>Date of creation:</b>		{{ad.createdAt | date}}</p>
+	</div>
+	</div>
+	<div class="row">
+	<div class="col-xs-16">
+        <p><b>Booked dates:</b> </p>
+	</div>
+		<div class="col-xs-6">
+        <a class="btn btn-default btn-sm" (click)="bookingForm(ad)" role="button"><span class="glyphicon glyphicon-book"></span> Make booking</a>
+	</div>
+	</div>
+	
+	<div>
+    <a class="btn btn-default btn-sm" (click)="cancel()" role="button"><span class="glyphicon glyphicon-chevron-left"></span> Return to list</a>
+	</div>	
 </div>
+
+<!-- Шаблон бронирования -->
+<div *ngIf="bookingMode;">
+    <h2>{{ad.caption}}</h2>
+	<div class="row">
+	<div class="col-xs-12">
+        <p><b>Price:</b>		{{ad.price}} ₽</p>
+	</div>
+	</div>
+	<div class="row">
+	<div class="col-xs-6">
+        <p><b>City:</b>		{{ad.city}}</p>
+	</div>
+	<div class="col-xs-6">
+        <p><b>Address:</b>		{{ad.adress}}</p>
+	</div>
+	</div>
+	<div class="row">
+	<div class="col-xs-6">
+		<p><b>Type:</b>		{{ad.type}}</p>
+	</div>
+	<div class="col-xs-6">
+        <p><b>What is for rent:</b>		{{ad.whatRented}}</p>
+	</div>
+	</div>
+	<div class="row">
+	<div class="col-xs-6">
+        <p><b>Number of bedrooms:</b>		{{ad.bedrooms}}</p>
+	</div>
+	<div class="col-xs-6">
+        <p><b>Number of bathrooms:</b>		{{ad.bathrooms}}</p>
+	</div>
+	</div>
+	<div class="row">
+	<div class="col-xs-12">
+        <p><b>Description:</b>		{{ad.description}}</p>
+	</div>
+	</div>
+	<form [formGroup]="bookingF" (ngSubmit)="onSubmit()">
+	<input type="hidden" formControlName="adid" [ngModel]="ad.adid">
+	<input type="hidden" formControlName="userid" [ngModel]="currentUser?.userid">
+	<input type="hidden" formControlName="bookedPrice" [ngModel]="ad?.price">
+	<div class="form-group">
+        <label for="arrivalDate">Arrival Date</label>
+        <input type="date" formControlName="arrivalDate" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.arrivalDate.errors }" />
+        <div *ngIf="submitted && f.arrivalDate.errors" class="invalid-feedback">
+            <div *ngIf="f.arrivalDate.errors.required">Arrival Date is required</div>
+        </div>
+    </div>
+	<div class="form-group">
+        <label for="arrivalDate">Departure Date</label>
+        <input type="date" formControlName="departureDate" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.departureDate.errors }" />
+        <div *ngIf="submitted && f.departureDate.errors" class="invalid-feedback">
+            <div *ngIf="f.departureDate.errors.required">Departure Date is required</div>
+        </div>
+    </div>
+	<div class="form-group">
+	<button [disabled]="loading" class="btn btn-primary">Confirm booking</button>
+        <img *ngIf="loading" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+	
+	<div>
+    <a class="btn btn-default btn-sm" (click)="closeBooking(ad)" role="button"><span class="glyphicon glyphicon-remove"></span> Return to list</a>
+	</div>	
+	</div>
+	</form>
+</div>
+
+
 
 		<swal
 			#saveSwal
-			title = "Успешно"
+			title = "Successful action"
 			type="success">						
 		</swal>
 <swal

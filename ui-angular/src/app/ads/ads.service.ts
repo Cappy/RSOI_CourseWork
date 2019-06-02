@@ -24,12 +24,15 @@ export class AdsService {
     getads(page: number, size: number) {
         return this.http.get(this.url + '?page=' + page + '&size=' + size);
     }
+	
+	getAllBookingsByAdId(adid: string) {
+        return this.http.get(this.url + '/' + adid + '/bookings');
+    }
  
     createad(ad: Ad) {
 		return this.http.post(this.url, ad, { observe: 'response' });
     }
     updatead(ad: Ad) {
-  
         return this.http.put(this.url + '/' + ad.adid, ad, { observe: 'response', responseType: 'text' });
     }
     deletead(adid: string) {

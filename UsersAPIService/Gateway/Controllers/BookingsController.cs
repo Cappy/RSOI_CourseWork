@@ -99,20 +99,20 @@ namespace Gateway.Controllers
         public async Task<IActionResult> PostBooking([FromBody] Booking bookingModel)
         {
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", AC.GetTokenFromHeader(Request));
-            string room = null;
-            string customer = null;
+            HttpResponseMessage ad = null;
+            HttpResponseMessage user = null;
 
             try
             {
-                room = await client.GetStringAsync(services.adsAPI + $"/{bookingModel.Adid}");
-                customer = await client.GetStringAsync(services.usersAPI + $"/{bookingModel.Userid}");
+                ad = await client.GetAsync(services.adsAPI + $"/{bookingModel.Adid}");
+                user = await client.GetAsync(services.usersAPI + $"/{bookingModel.Userid}");
             }
             catch
             {
                 return StatusCode(StatusCodes.Status400BadRequest);
             }
 
-            if (room == null || customer == null)
+            if (ad == null || user == null)
             {
                 return StatusCode(StatusCodes.Status400BadRequest);
             }

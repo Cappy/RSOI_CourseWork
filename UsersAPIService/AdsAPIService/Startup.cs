@@ -28,8 +28,12 @@ namespace AdsAPIService
 
             services.AddCors();
 
-            services.AddDbContext<AdsContext>(options =>
-                    options.UseMySql(Configuration.GetConnectionString("DefaultConnection")));
+            //services.AddDbContext<AdsContext>(options =>
+            //        options.UseMySQL(Configuration.GetConnectionString("DefaultConnection")));
+
+            var connection = @"server=46.254.21.136; port=3306; database=p460741_rsoi; user=p460741_pavel; password=2M8p8B0c";
+            //services.AddDbContext<CustomersContext>(options => options.UseSqlServer(connection));
+            services.AddDbContext<AdsContext>(options => options.UseMySql(connection));
 
             services.AddMvc();
 
@@ -44,7 +48,7 @@ namespace AdsAPIService
             }
             else
             {
-                app.UseHsts();
+                //app.UseHsts();
             }
 
             if (env.IsDevelopment())
@@ -53,7 +57,7 @@ namespace AdsAPIService
             }
             else
             {
-                app.UseHttpsRedirection();
+                //app.UseHttpsRedirection();
             }
 
             app.UseDefaultFiles();

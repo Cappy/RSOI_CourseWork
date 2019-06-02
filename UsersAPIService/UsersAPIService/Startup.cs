@@ -33,8 +33,11 @@ namespace UsersAPIService
         {
             services.AddCors();
 
-            services.AddDbContext<UsersContext>(options =>
-                    options.UseMySql(Configuration.GetConnectionString("DefaultConnection")));
+            //services.AddDbContext<UsersContext>(options =>
+            //        options.UseMySql(Configuration.GetConnectionString("DefaultConnection")));
+            var connection = @"server=46.254.21.136; port=3306; database=p460741_rsoi; user=p460741_pavel; password=2M8p8B0c";
+            //services.AddDbContext<CustomersContext>(options => options.UseSqlServer(connection));
+            services.AddDbContext<UsersContext>(options => options.UseMySql(connection));
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                     .AddJwtBearer(options =>

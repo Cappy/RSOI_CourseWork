@@ -1,0 +1,12 @@
+C:\Users\cappy\Documents\GitHub\RSOI_CourseWork\UsersAPIService\BookingsAPIService\obj\Debug\netcoreapp2.0\BookingsAPIService.csprojAssemblyReference.cache
+C:\Users\cappy\Documents\GitHub\RSOI_CourseWork\UsersAPIService\BookingsAPIService\obj\Debug\netcoreapp2.0\BookingsAPIService.csproj.CoreCompileInputs.cache
+C:\Users\cappy\Documents\GitHub\RSOI_CourseWork\UsersAPIService\BookingsAPIService\obj\Debug\netcoreapp2.0\UserSecretsAssemblyInfo.cs
+C:\Users\cappy\Documents\GitHub\RSOI_CourseWork\UsersAPIService\BookingsAPIService\obj\Debug\netcoreapp2.0\BookingsAPIService.AssemblyInfoInputs.cache
+C:\Users\cappy\Documents\GitHub\RSOI_CourseWork\UsersAPIService\BookingsAPIService\obj\Debug\netcoreapp2.0\BookingsAPIService.AssemblyInfo.cs
+C:\Users\cappy\Documents\GitHub\RSOI_CourseWork\UsersAPIService\BookingsAPIService\bin\Debug\netcoreapp2.0\BookingsAPIService.deps.json
+C:\Users\cappy\Documents\GitHub\RSOI_CourseWork\UsersAPIService\BookingsAPIService\bin\Debug\netcoreapp2.0\BookingsAPIService.runtimeconfig.json
+C:\Users\cappy\Documents\GitHub\RSOI_CourseWork\UsersAPIService\BookingsAPIService\bin\Debug\netcoreapp2.0\BookingsAPIService.runtimeconfig.dev.json
+C:\Users\cappy\Documents\GitHub\RSOI_CourseWork\UsersAPIService\BookingsAPIService\bin\Debug\netcoreapp2.0\BookingsAPIService.dll
+C:\Users\cappy\Documents\GitHub\RSOI_CourseWork\UsersAPIService\BookingsAPIService\bin\Debug\netcoreapp2.0\BookingsAPIService.pdb
+C:\Users\cappy\Documents\GitHub\RSOI_CourseWork\UsersAPIService\BookingsAPIService\obj\Debug\netcoreapp2.0\BookingsAPIService.dll
+C:\Users\cappy\Documents\GitHub\RSOI_CourseWork\UsersAPIService\BookingsAPIService\obj\Debug\netcoreapp2.0\BookingsAPIService.pdb

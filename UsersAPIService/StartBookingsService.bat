@@ -1,1 +1,1 @@
-dotnet run --project "%~dp0BookingAPIServices\BookingAPIServices"
+dotnet run --project "%~dp0BookingsAPIService"

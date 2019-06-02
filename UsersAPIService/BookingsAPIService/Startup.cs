@@ -28,8 +28,11 @@ namespace BookingsAPIService
 
             services.AddCors();
 
-            services.AddDbContext<BookingContext>(options =>
-                    options.UseMySql(Configuration.GetConnectionString("DefaultConnection")));
+            //services.AddDbContext<BookingContext>(options =>
+            //        options.UseMySql(Configuration.GetConnectionString("DefaultConnection")));
+            var connection = @"server=46.254.21.136; port=3306; database=p460741_rsoi; user=p460741_pavel; password=2M8p8B0c";
+            //services.AddDbContext<CustomersContext>(options => options.UseSqlServer(connection));
+            services.AddDbContext<BookingContext>(options => options.UseMySQL(connection));
 
             services.AddMvc();
 
@@ -44,7 +47,7 @@ namespace BookingsAPIService
             }
             else
             {
-                app.UseHsts();
+                //app.UseHsts();
             }
 
             if (env.IsDevelopment())
@@ -53,7 +56,7 @@ namespace BookingsAPIService
             }
             else
             {
-                app.UseHttpsRedirection();
+                //app.UseHttpsRedirection();
             }
 
             app.UseDefaultFiles();
