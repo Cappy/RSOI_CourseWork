@@ -147,7 +147,7 @@ namespace AdsAPIService.Controllers
 
         private bool AdsExists(Guid id)
         {
-            return _context.Ads.Any(e => e.Adid == id);
+            return _context.Ads.Any(m => Convert.ToString(m.Adid) == id.ToString());
         }
     }
 }

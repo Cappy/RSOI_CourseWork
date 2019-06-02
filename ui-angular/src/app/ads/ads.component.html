@@ -35,7 +35,7 @@
     <tbody>
         <tr *ngFor="let a of ads | paginate: { itemsPerPage: size, currentPage: page, totalItems: adsCount } | orderBy: 'createdAt'">
             <ng-template [ngIf]="ad?.adid != a.adid" [ngIfElse]="edit">
-				<td class="col-md-2"><a class="btn btn-warning btn-xs btn-space" role="button" (click)="fullInfo(a);" class="nav-link"><span class="glyphicon glyphicon-info-sign"></span> View ad</a></td>
+				<td class="col-md-2"><a class="btn btn-warning btn-xs btn-space" role="button" (click)="fullInfo(a);" class="nav-link"><span class="glyphicon glyphicon-info-sign"></span> View</a></td>
                 <td class="col-md-2">{{a?.caption}}</td>
 				<td class="col-md-2">{{a?.city}}</td>
 				<td class="col-md-2">{{a?.type}}</td>
@@ -190,7 +190,7 @@
 <!-- </form> -->
 	
 	<div>
-    <a class="btn btn-default btn-sm" (click)="cancel()" role="button"><span class="glyphicon glyphicon-chevron-left"></span> Return to list</a>
+    <a class="btn btn-default btn-sm" (click)="cancel();" role="button"><span class="glyphicon glyphicon-chevron-left"></span> Return to list</a>
 	</div>
 	
 </div>
@@ -267,7 +267,7 @@
 		<div class="col-md-3">
         <input type="text" name="beds" [(ngModel)]="ad.beds" class="form-control" #beds="ngModel" required pattern="[0-9]+"/>
 		<br>
-			<div [hidden]="bedrooms.valid || bedrooms.untouched" class="alert alert-danger">
+			<div [hidden]="beds.valid || beds.untouched" class="alert alert-danger">
                Number of beds is not specified or is incorrect.
             </div>
 		</div>
@@ -306,7 +306,7 @@
 	<div class="form-group">
 		<div class="col-md-3"></div>
         <div class="col-md-3">
-            <input type="button"  [disabled]="caption.invalid || price.invalid" value="Save" (click)="save();" class="btn btn-success" />
+            <input type="button"  [disabled]="caption.invalid || price.invalid || city.invalid || adress.invalid || type.invalid || whatRented.invalid || bedrooms.invalid || bathrooms.invalid || description.invalid || price.invalid" value="Save" (click)="save();" class="btn btn-success" />
         </div>
     </div>
 <!-- </form> -->
@@ -335,7 +335,7 @@
 	</div>
 	<div class="row">
 	<div class="col-xs-6">
-		<p><b>Type:</b>		{{ad.type}}</p>
+		<p><b>Type:	</b>{{ad.type}}</p>
 	</div>
 	<div class="col-xs-6">
         <p><b>What is for rent:</b>		{{ad.whatRented}}</p>
@@ -364,18 +364,18 @@
         <p><b>Booked dates:</b> </p>
 	</div>
 		<div class="col-xs-6">
-        <a class="btn btn-default btn-sm" (click)="bookingForm(ad)" role="button"><span class="glyphicon glyphicon-book"></span> Make booking</a>
+        <a class="btn btn-default btn-sm" (click)="bookingForm()" role="button"><span class="glyphicon glyphicon-book"></span> Make booking</a>
 	</div>
 	</div>
 	
 	<div>
-    <a class="btn btn-default btn-sm" (click)="cancel()" role="button"><span class="glyphicon glyphicon-chevron-left"></span> Return to list</a>
+    <a class="btn btn-default btn-sm" (click)="cancel(ad)" role="button"><span class="glyphicon glyphicon-chevron-left"></span> Return to list</a>
 	</div>	
 </div>
 
 <!-- Шаблон бронирования -->
 <div *ngIf="bookingMode;">
-    <h2>{{ad.caption}}</h2>
+<h2>{{ad.caption}}</h2>
 	<div class="row">
 	<div class="col-xs-12">
         <p><b>Price:</b>		{{ad.price}} ₽</p>
@@ -410,6 +410,7 @@
         <p><b>Description:</b>		{{ad.description}}</p>
 	</div>
 	</div>
+	<br><br><h2>Choose dates</h2>
 	<form [formGroup]="bookingF" (ngSubmit)="onSubmit()">
 	<input type="hidden" formControlName="adid" [ngModel]="ad.adid">
 	<input type="hidden" formControlName="userid" [ngModel]="currentUser?.userid">
@@ -428,13 +429,14 @@
             <div *ngIf="f.departureDate.errors.required">Departure Date is required</div>
         </div>
     </div>
-	<div class="form-group">
+	<div class="row">
+	<div class="form-group col-xs-6">
 	<button [disabled]="loading" class="btn btn-primary">Confirm booking</button>
         <img *ngIf="loading" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
-	
-	<div>
-    <a class="btn btn-default btn-sm" (click)="closeBooking(ad)" role="button"><span class="glyphicon glyphicon-remove"></span> Return to list</a>
+	<div class="col-xs-6">
+    <a class="btn btn-danger" (click)="closeBooking();" role="button"><span class="glyphicon glyphicon-remove"></span> Cancel</a>
 	</div>	
+	</div>
 	</div>
 	</form>
 </div>
@@ -448,10 +450,11 @@
 		</swal>
 <swal
 	#errorSwal
-	title = "Ошибка"
+	title = "Error"
 	text = "{{errorMsg}}"
 	type="error">
 <ng-container *swalPartial="swalTargets.text">
 <div style="display: table; margin: 0 auto;">{{errorMsg}}</div>
 </ng-container>	
+</swal>
  

@@ -101,15 +101,32 @@ namespace Gateway.Controllers
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", AC.GetTokenFromHeader(Request));
             HttpResponseMessage ad = null;
             HttpResponseMessage user = null;
+            HttpResponseMessage bookingsOfUser = null;
+
 
             try
             {
                 ad = await client.GetAsync(services.adsAPI + $"/{bookingModel.Adid}");
                 user = await client.GetAsync(services.usersAPI + $"/{bookingModel.Userid}");
+                bookingsOfUser = await client.GetAsync(services.gatewayAPI + $"/users/{bookingModel.Userid}/bookings");
             }
             catch
             {
                 return StatusCode(StatusCodes.Status400BadRequest);
+            }
+
+            List<Booking> BookingsOfUser = await bookingsOfUser.Content.ReadAsAsync<List<Booking>>();
+
+            foreach (var entry in BookingsOfUser)
+            {
+                if (entry.Adid == bookingModel.Adid)
+                {
+                    return StatusCode(StatusCodes.Status400BadRequest, new
+                    {
+                        err = "You may have only one booking of any housing.\n" +
+                        "Before making a new book, please, cancel old booking."
+                    });
+                }
             }
 
             if (ad == null || user == null)
@@ -131,9 +148,12 @@ namespace Gateway.Controllers
                 return StatusCode(StatusCodes.Status503ServiceUnavailable);
             }
 
-            if (booking == null)
+            if (booking.StatusCode == System.Net.HttpStatusCode.BadRequest)
             {
-                return NotFound();
+                return StatusCode(StatusCodes.Status400BadRequest, new
+                {
+                    err = "Departure date can't be less than arrival date."
+                });
             }
 
             //return Ok(client.GetStringAsync(customersAPI + $"/{customerModel.CustomerId}"));

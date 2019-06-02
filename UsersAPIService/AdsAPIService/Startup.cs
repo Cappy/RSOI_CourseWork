@@ -33,7 +33,7 @@ namespace AdsAPIService
 
             var connection = @"server=46.254.21.136; port=3306; database=p460741_rsoi; user=p460741_pavel; password=2M8p8B0c";
             //services.AddDbContext<CustomersContext>(options => options.UseSqlServer(connection));
-            services.AddDbContext<AdsContext>(options => options.UseMySql(connection));
+            services.AddDbContext<AdsContext>(options => options.UseMySQL(connection));
 
             services.AddMvc();
 

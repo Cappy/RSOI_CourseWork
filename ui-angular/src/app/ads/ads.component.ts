@@ -41,7 +41,7 @@ export class AdsComponent implements OnInit {
   page: number = 1;
   size: number = 10;
   
-  submited: boolean = false;
+  submitted: boolean = false;
   
   currentUser: User;
 
@@ -64,7 +64,7 @@ export class AdsComponent implements OnInit {
 	
   }
 
-ngOnInit() {
+	ngOnInit() {
         this.loadads();    // загрузка данных при старте компонента
 		//this.getadsCount();
 		this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
@@ -90,20 +90,23 @@ ngOnInit() {
             return;
         }
 		this.loading = true;
-		console.log(this.bookingF.value);
         this.bookingsService.createBooking(this.bookingF.value)
             .pipe(first())
             .subscribe(
                 data => {
-                    this.loadads();
+					this.loading = false;
+					//this.f.arrivalDate = null;
+					//this.f.departureDate = null;
+					this.cancel();
 					this.saveSwal.show();
                     this.router.navigate(['/ads']);
                 },
-                error => {
-					console.log(error);
+                (err: any) => {
+					this.loading = false;
+					//this.f.arrivalDate = null;
+					//this.f.departureDate = null;
                     this.errorMsg = "Error: " + err.error.err;
 					this.errorSwal.show();
-                    this.loading = false;
                 });
 	}
 
@@ -150,7 +153,7 @@ ngOnInit() {
 				this.errorSwal.show();
 			});
         }
-		this.cancel();
+		this.cancel(this.ad);
 		this.loadads();
 		
 	}
@@ -163,46 +166,54 @@ ngOnInit() {
 	
 	fullInfo(c: Ad) {
 		
-		this.bookings = this.adsService.getAllBookingsByAdId(c.adid);
+		this.adsService.getAllBookingsByAdId(c.adid)
+			.subscribe((data: Booking[]) => {
+			
+			this.bookings = data;
+			//console.log(data);
+			});
+			
 		console.log(this.bookings);
 		this.tableMode = false;
 		this.fullInfoMode = true;
         this.ad = c;
     }
 	
-	bookingForm(c: Ad) {
-		this.ad = c;
+	bookingForm() {
 		this.fullInfoMode = false;
 		this.bookingMode = true;
 
     }
 	
-	closeBooking(c: Ad){
-		this.ad = c;
+	closeBooking(){
+		//this.f.arrivalDate = null;
+		//this.f.departureDate = null;
 		this.bookingMode = false;
 		this.fullInfoMode = true;
 	}
 	
     cancel() {
 		this.loadads();
-        this.ad = new Ad();
         this.tableMode = true;
 		this.editMode = false;
 		this.createMode = false;
 		this.fullInfoMode = false;
+		this.bookingMode = false;
     }
 	
 	
     delete(c: Ad) {
 	  
 	  this.adsService.deletead(c.adid)
-            .subscribe(data => this.loadads(),
+            .subscribe(data => {
+					this.loadads();
+					this.saveSwal.show();
+			},
 			(err: any) => {
 			console.log(err);
 			this.errorMsg = "Error: " + err.error.err;
 			this.errorSwal.show();
 			});
-			console.log(c.adid);
 	this.cancel();
     }
 	

@@ -145,7 +145,7 @@ namespace UsersAPIServices.Controllers
                 return BadRequest(ModelState);
             }
 
-            var Users = await _context.Users.SingleOrDefaultAsync(m => m.Userid == id);
+            var Users = await _context.Users.SingleOrDefaultAsync(m => Convert.ToString(m.Userid) == id.ToString());
             if (Users == null)
             {
                 return NotFound();
@@ -159,7 +159,7 @@ namespace UsersAPIServices.Controllers
 
         private bool UsersExists(Guid id)
         {
-            return _context.Users.Any(e => e.Userid == id);
+            return _context.Users.Any(m => Convert.ToString(m.Userid) == id.ToString());
         }
     }
 }

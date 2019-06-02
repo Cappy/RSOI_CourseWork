@@ -47,7 +47,7 @@ namespace BookingsAPIService.Controllers
                 return BadRequest(ModelState);
             }
 
-            var booking = await _context.Booking.SingleOrDefaultAsync(m => m.Bookingid == id);
+            var booking = await _context.Booking.SingleOrDefaultAsync(m => Convert.ToString(m.Bookingid) == id.ToString());
 
             if (booking == null)
             {
@@ -122,7 +122,13 @@ namespace BookingsAPIService.Controllers
                 return BadRequest(ModelState);
             }
 
+            if(booking.ArrivalDate>=booking.DepartureDate)
+            {
+                return BadRequest("Departure date can't be less than arrival date.");
+            }
+
             booking.CreatedAt = DateTime.Now;
+
 
             _context.Booking.Add(booking);
             try
@@ -153,7 +159,7 @@ namespace BookingsAPIService.Controllers
                 return BadRequest(ModelState);
             }
 
-            var booking = await _context.Booking.SingleOrDefaultAsync(m => m.Bookingid == id);
+            var booking = await _context.Booking.SingleOrDefaultAsync(m => Convert.ToString(m.Bookingid) == id.ToString());
             if (booking == null)
             {
                 return NotFound();
@@ -170,7 +176,7 @@ namespace BookingsAPIService.Controllers
 
         private bool BookingExists(Guid id)
         {
-            return _context.Booking.Any(e => e.Bookingid == id);
+            return _context.Booking.Any(m => Convert.ToString(m.Bookingid) == id.ToString());
         }
     }
 }
