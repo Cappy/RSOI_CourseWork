@@ -22,7 +22,7 @@ namespace UsersAPIService.Models
             if (!optionsBuilder.IsConfigured)
             {
 //#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseMySql("server=46.254.21.136;port=3306;user=p460741_pavel;password=2M8p8B0c;database=p460741_rsoi");
+                optionsBuilder.UseMySQL("server=46.254.21.136;port=3306;user=p460741_pavel;password=2M8p8B0c;database=p460741_rsoi");
             }
         }
 
@@ -56,11 +56,11 @@ namespace UsersAPIService.Models
 
                 entity.Property(e => e.IsAdmin)
                     .HasColumnName("is_admin")
-                    .HasColumnType("bool(1)");
+                    .HasColumnType("tinyint(1)");
 
                 entity.Property(e => e.IsRentlord)
                     .HasColumnName("is_rentlord")
-                    .HasColumnType("bool(1)");
+                    .HasColumnType("tinyint(1)");
 
                 entity.Property(e => e.Name)
                     .HasColumnName("name")

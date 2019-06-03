@@ -102,6 +102,7 @@ namespace Gateway.Controllers
             HttpResponseMessage ad = null;
             HttpResponseMessage user = null;
             HttpResponseMessage bookingsOfUser = null;
+            HttpResponseMessage bookingsOfAd = null;
 
 
             try
@@ -109,6 +110,7 @@ namespace Gateway.Controllers
                 ad = await client.GetAsync(services.adsAPI + $"/{bookingModel.Adid}");
                 user = await client.GetAsync(services.usersAPI + $"/{bookingModel.Userid}");
                 bookingsOfUser = await client.GetAsync(services.gatewayAPI + $"/users/{bookingModel.Userid}/bookings");
+                bookingsOfAd = await client.GetAsync(services.gatewayAPI + $"/ads/{bookingModel.Adid}/bookings");
             }
             catch
             {
@@ -116,6 +118,7 @@ namespace Gateway.Controllers
             }
 
             List<Booking> BookingsOfUser = await bookingsOfUser.Content.ReadAsAsync<List<Booking>>();
+            List<Booking> BookingsOfAd = await bookingsOfAd.Content.ReadAsAsync<List<Booking>>();
 
             foreach (var entry in BookingsOfUser)
             {
@@ -125,6 +128,24 @@ namespace Gateway.Controllers
                     {
                         err = "You may have only one booking of any housing.\n" +
                         "Before making a new book, please, cancel old booking."
+                    });
+                }
+            }
+
+            foreach (var entry in BookingsOfAd)
+            {
+                //if ((entry.ArrivalDate >= bookingModel.ArrivalDate && entry.ArrivalDate <= bookingModel.DepartureDate && entry.DepartureDate >= bookingModel.DepartureDate) ||
+                //    (entry.ArrivalDate <= bookingModel.ArrivalDate && entry.DepartureDate >= bookingModel.ArrivalDate && entry.DepartureDate >= bookingModel.DepartureDate) ||
+                //    (entry.ArrivalDate <= bookingModel.ArrivalDate && entry.ArrivalDate <= bookingModel.DepartureDate && entry.DepartureDate <= bookingModel.DepartureDate))
+                if ((bookingModel.ArrivalDate <= entry.ArrivalDate && entry.ArrivalDate <= bookingModel.DepartureDate && bookingModel.DepartureDate <= entry.DepartureDate && bookingModel.ArrivalDate <= entry.DepartureDate) ||
+                    (entry.ArrivalDate <= bookingModel.ArrivalDate && bookingModel.ArrivalDate <= entry.DepartureDate && bookingModel.DepartureDate <= entry.DepartureDate && bookingModel.DepartureDate >= entry.ArrivalDate) ||
+                    (entry.ArrivalDate <= bookingModel.ArrivalDate && bookingModel.ArrivalDate <= entry.DepartureDate && entry.DepartureDate <= bookingModel.DepartureDate && entry.ArrivalDate <= bookingModel.DepartureDate) ||
+                    (bookingModel.ArrivalDate<=entry.ArrivalDate && entry.ArrivalDate<=bookingModel.DepartureDate && entry.DepartureDate <= bookingModel.DepartureDate && bookingModel.ArrivalDate <= entry.DepartureDate))
+                    {
+                    return StatusCode(StatusCodes.Status400BadRequest, new
+                    {
+                        err = "These dates are busy.\n" +
+                        "Look into booked dates from the prevoius page and choose new dates."
                     });
                 }
             }

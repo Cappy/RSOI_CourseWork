@@ -28,6 +28,10 @@ export class BookingsService {
     getBookings(page: number, size: number) {
         return this.http.get('/api/bookings-with-info' + '?page=' + page + '&size=' + size);
     }
+	
+	getBookingsOfUser(page: number, size: number, userid: string) {
+        return this.http.get('/api/bookings-with-info-of-user' + '?page=' + page + '&size=' + size + '&userid=' + userid);
+    }
  
     createBooking(booking: Booking) {
 		return this.http.post(this.url, booking, { observe: 'response' });

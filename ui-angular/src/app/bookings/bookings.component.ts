@@ -7,6 +7,8 @@ import { RoomsService } from './../rooms/rooms.service';
 import { Customer } from './../customers/customer';
 import { Room } from './../rooms/room';
 
+import { User } from '../_models';
+
 import { Booking } from './booking';
 import { BookingFull } from './bookingFull';
 
@@ -43,6 +45,8 @@ export class BookingsComponent implements OnInit {
   bookinginfo: boolean = false;
   bookingFull: BookingFull;
   
+  currentUser: User;
+  
   page: number = 1;
   size: number = 10;
 
@@ -67,19 +71,20 @@ export class BookingsComponent implements OnInit {
   }
 
 ngOnInit() {
-        this.loadBookings();    // загрузка данных при старте компонента	
+		this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
+		this.loadBookings();    // загрузка данных при старте компонента	
     }
 
     // получаем данные через сервис
     loadBookings() {	
 		this.getBookingsCount();
-        this.bookingsService.getBookings(this.page,this.size)
+        this.bookingsService.getBookingsOfUser(this.page,this.size, this.currentUser.userid)
             .subscribe((data: Booking[]) => this.bookings = data,
 			(err: any) => { 
-			this.errorMsg = "Ошибка: " + err.error.err;
+			this.errorMsg = "Error: " + err.error.err;
 			this.errorSwal.show();
 			});
-			
+
 		if (this.page > 0 && this.size > 0)
 		{
 		this.router.navigate(['/bookings'], { queryParams: { page: this.page, size: this.size } });
@@ -92,13 +97,14 @@ ngOnInit() {
     }
 	
 	getFullBookingInfo(b: Booking) {
-	this.bookingsService.getBooking(b.bookingId)
+	this.bookingsService.getBooking(b.bookingid)
         .subscribe((data: BookingFull) => { this.bookingFull = data; this.bookinginfo = true; });
+		console.log(this.bookingFull);
 	}
 	
     // сохранение данных
     save() {
-        if (this.booking.bookingId == null) {
+        if (this.booking.bookingid == null) {
 			
 			this.bookingsService.createBooking(this.booking)
                 .subscribe((data: HttpResponse<Booking>) => {
@@ -129,15 +135,23 @@ ngOnInit() {
 
 	
     cancel() {
+		console.log(this.bookings);
 		this.loadBookings();
         this.booking = new Booking();
         this.tableMode = true;
     }
 	
     delete(b: Booking) {
-	  
-	  this.bookingsService.deleteBooking(b.bookingId)
-            .subscribe(data => this.loadBookings());
+	  this.bookingsService.deleteBooking(b.bookingid)
+            .subscribe(data => {
+				this.loadBookings();				
+				this.saveSwal.show();
+			},
+			(err: any) => {
+			console.log(err);
+			this.errorMsg = "Error: " + err.error.err;
+			this.errorSwal.show();
+			});
 	this.cancel();
     }
 	

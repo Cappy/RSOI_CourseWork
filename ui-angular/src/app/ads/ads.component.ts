@@ -38,6 +38,7 @@ export class AdsComponent implements OnInit {
   fullInfoMode: boolean = false;
   bookingMode: boolean = false;
   loading: boolean = false;
+  bookingsUndefined: boolean = false;
   page: number = 1;
   size: number = 10;
   
@@ -103,6 +104,7 @@ export class AdsComponent implements OnInit {
                 },
                 (err: any) => {
 					this.loading = false;
+					this.ads.push(this.ad);
 					//this.f.arrivalDate = null;
 					//this.f.departureDate = null;
                     this.errorMsg = "Error: " + err.error.err;
@@ -129,7 +131,7 @@ export class AdsComponent implements OnInit {
     // сохранение данных
     save() {
         if (this.ad.adid == null) {
-			
+			this.ad.userid = this.currentUser.userid;
 			this.adsService.createad(this.ad)
                 .subscribe((data: HttpResponse<Ad>) => {
 					this.loadads();
@@ -153,13 +155,14 @@ export class AdsComponent implements OnInit {
 				this.errorSwal.show();
 			});
         }
-		this.cancel(this.ad);
+		this.cancel();
 		this.loadads();
 		
 	}
  
     editad(c: Ad) {
 		this.tableMode = false;
+		this.fullInfoMode = false;
 		this.editMode = true;
         this.ad = c;
     }
@@ -168,18 +171,22 @@ export class AdsComponent implements OnInit {
 		
 		this.adsService.getAllBookingsByAdId(c.adid)
 			.subscribe((data: Booking[]) => {
-			
+				console.log(data);
+			if (data.length === 0)
+			{
+				this.bookingsUndefined = true;
+			}
 			this.bookings = data;
-			//console.log(data);
 			});
 			
-		console.log(this.bookings);
+		//console.log(this.bookings);
 		this.tableMode = false;
 		this.fullInfoMode = true;
         this.ad = c;
     }
 	
 	bookingForm() {
+		this.bookingF.reset();
 		this.fullInfoMode = false;
 		this.bookingMode = true;
 
@@ -190,15 +197,18 @@ export class AdsComponent implements OnInit {
 		//this.f.departureDate = null;
 		this.bookingMode = false;
 		this.fullInfoMode = true;
+		this.bookingsUndefined = false;
 	}
 	
     cancel() {
-		this.loadads();
         this.tableMode = true;
 		this.editMode = false;
 		this.createMode = false;
 		this.fullInfoMode = false;
 		this.bookingMode = false;
+		this.bookingsUndefined = false;
+		this.loadads();
+		this.loadads();
     }
 	
 	
@@ -215,9 +225,11 @@ export class AdsComponent implements OnInit {
 			this.errorSwal.show();
 			});
 	this.cancel();
+	this.loadads();
     }
 	
     add() {
+		this.ad = new Ad();
         this.tableMode = false;
 		this.createMode = true;
     }

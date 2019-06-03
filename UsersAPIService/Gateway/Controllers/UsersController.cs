@@ -127,7 +127,7 @@ namespace Gateway.Controllers
 
             if (user.IsSuccessStatusCode)
             {
-                var User = await user.Content.ReadAsAsync<List<Users>>();
+                var User = await user.Content.ReadAsAsync<Users>();
                 return Ok(User);
             }
             else

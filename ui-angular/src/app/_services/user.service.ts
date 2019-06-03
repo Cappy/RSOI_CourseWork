@@ -12,7 +12,7 @@ export class UserService {
     // }
 
     getById(id?: string) {
-        return this.http.get(`/api/auth/` + id);
+        return this.http.get(`/api/users/` + id);
     }
 
     register(user: User) {

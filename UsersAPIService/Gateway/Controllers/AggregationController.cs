@@ -183,29 +183,11 @@ namespace Gateway.Controllers
             {
                 Bookingid = bk.Bookingid,
                 user = UserInfo,
-                //new Users
-                //{
-                //    Userid = UserInfo.Userid,
-                //    Name = UserInfo.Name,
-                //    Surname = UserInfo.Surname,
-                //    Email = UserInfo.Email
-                //},
-                ad = AdInfo
-                //new Ads
-                //{
-                //    Adid = AdInfo.Adid,
-                //    Userid = AdInfo.Userid,
-                //    Caption = AdInfo.Caption,
-                //    City = AdInfo.,
-                //    Adress = "[service unavailable]",
-                //    Type = "[service unavailable]",
-                //    WhatRented = "[service unavailable]",
-                //    Bedrooms = -1,
-                //    Beds = -1,
-                //    Bathrooms = -1,
-                //    Description = "[service unavailable]",
-                //    Price = -1,
-                //}
+                ad = AdInfo,
+                bookedPrice = bk.BookedPrice,
+                arrivalDate = bk.ArrivalDate,
+                departureDate = bk.DepartureDate,
+                createdAt = bk.CreatedAt
             };
 
             return Ok(result);
@@ -311,33 +293,128 @@ namespace Gateway.Controllers
                 {
                     Bookingid = bk.Bookingid,
                     user = UserInfo,
-                    //new Users
-                    //{
-                    //    Userid = UserInfo.Userid,
-                    //    Name = UserInfo.Name,
-                    //    Surname = UserInfo.Surname,
-                    //    Email = UserInfo.Email
-                    //},
-                    ad = AdInfo
-                    //new Ads
-                    //{
-                    //    Adid = AdInfo.Adid,
-                    //    Userid = AdInfo.Userid,
-                    //    Caption = AdInfo.Caption,
-                    //    City = AdInfo.,
-                    //    Adress = "[service unavailable]",
-                    //    Type = "[service unavailable]",
-                    //    WhatRented = "[service unavailable]",
-                    //    Bedrooms = -1,
-                    //    Beds = -1,
-                    //    Bathrooms = -1,
-                    //    Description = "[service unavailable]",
-                    //    Price = -1,
-                    //}
+                    ad = AdInfo,
+                    bookedPrice = bk.BookedPrice,
+                    arrivalDate = bk.ArrivalDate,
+                    departureDate = bk.DepartureDate,
+                    createdAt = bk.CreatedAt
                 };
 
                 result.Add(entry);
 
+            }
+
+            return Ok(result);
+        }
+        [HttpGet("bookings-with-info-of-user")]
+        public async Task<IActionResult> GetBookingsOfUser(int? page, int? size, Guid userid)
+        {
+            HttpResponseMessage bookings;
+            try
+            {
+                bookings = await client.GetAsync(services.bookingsAPI + $"?page={page}&size={size}");
+            }
+            catch
+            {
+                return StatusCode(StatusCodes.Status503ServiceUnavailable, new
+                {
+                    err = "Booking service is unavailable (503) [API message]"
+                });
+            }
+
+            if (bookings == null)
+            {
+                return NotFound();
+            }
+
+            var Bookings = await bookings.Content.ReadAsAsync<List<Booking>>();
+
+            HttpResponseMessage user = null;
+            HttpResponseMessage ad = null;
+
+            var result = new List<BookingWithInfo>();
+
+            Users userNull = new Users();
+            Ads adNull = new Ads();
+
+            foreach (Booking bk in Bookings)
+            {
+                if (bk.Userid == userid)
+                {
+                    try
+                    {
+                        user = await client.GetAsync(services.usersAPI + $"/{bk.Userid}");
+                    }
+                    catch
+                    {
+                        userNull = new Users()
+                        {
+                            Userid = Guid.Empty,
+                            Name = "[service unavailable]",
+                            Surname = "",
+                            Email = "[service unavailable]"
+                        };
+                    }
+
+                    try
+                    {
+                        ad = await client.GetAsync(services.adsAPI + $"/{bk.Adid}");
+                    }
+                    catch
+                    {
+
+                        adNull = new Ads()
+                        {
+                            Adid = Guid.Empty,
+                            Userid = Guid.Empty,
+                            Caption = "[service unavailable]",
+                            City = "[service unavailable]",
+                            Adress = "[service unavailable]",
+                            Type = "[service unavailable]",
+                            WhatRented = "[service unavailable]",
+                            Bedrooms = -1,
+                            Beds = -1,
+                            Bathrooms = -1,
+                            Description = "[service unavailable]",
+                            Price = -1,
+                        };
+                    }
+
+                    Users UserInfo = null;
+                    Ads AdInfo = null;
+
+
+                    if (user.IsSuccessStatusCode)
+                    {
+                        UserInfo = await user.Content.ReadAsAsync<Users>();
+                    }
+                    else
+                    {
+                        UserInfo = userNull;
+                    }
+                    if (ad.IsSuccessStatusCode)
+                    {
+                        AdInfo = await ad.Content.ReadAsAsync<Ads>();
+                    }
+                    else
+                    {
+                        AdInfo = adNull;
+                    }
+
+                    var entry = new BookingWithInfo
+                    {
+                        Bookingid = bk.Bookingid,
+                        user = UserInfo,
+                        ad = AdInfo,
+                        bookedPrice = bk.BookedPrice,
+                        arrivalDate = bk.ArrivalDate,
+                        departureDate = bk.DepartureDate,
+                        createdAt = bk.CreatedAt
+                    };
+
+                    result.Add(entry);
+
+                }
             }
 
             return Ok(result);

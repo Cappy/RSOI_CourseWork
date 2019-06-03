@@ -63,6 +63,29 @@ namespace Gateway.Controllers
             return Ok(User);
         }
 
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(Guid id, [FromBody]UserDto userDto)
+        {
+            HttpResponseMessage user;
+            try
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", GetTokenFromHeader(Request));
+                user = await client.PutAsJsonAsync(services.authAPI + "/" + id, userDto);
+            }
+            catch
+            {
+                return StatusCode(StatusCodes.Status503ServiceUnavailable);
+            }
+
+            if (!user.IsSuccessStatusCode)
+            {
+                var message = user.Content.ReadAsAsync<ErrorMessage>().Result;
+                return BadRequest(message);
+            }
+
+            return Ok();
+        }
+
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody]UserDto userDto)
         {

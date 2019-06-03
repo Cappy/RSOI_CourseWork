@@ -39,6 +39,11 @@ namespace UsersAPIService.Controllers
         [HttpPost("register")]
         public IActionResult Register([FromBody]UserDto userDto)
         {
+            if (userDto.Password.ToString().Length <= 6)
+            {
+                return BadRequest(new { message = "Password must be longer than 6 characters." });
+            }
+
             if (userDto.Password.ToString() != userDto.PasswordConfirm.ToString())
             {
                 return BadRequest(new { message = "Password and confiramtion of password must be the same." });
@@ -137,7 +142,7 @@ namespace UsersAPIService.Controllers
             if (string.IsNullOrEmpty(Email) || string.IsNullOrEmpty(Password))
                 return null;
 
-            var user = _context.Users.SingleOrDefault(x => x.Email == Email);
+            var user = _context.Users.SingleOrDefault(x => Convert.ToString(x.Email).ToLower() == Email.ToLower());
 
             if (user != null)
             {
@@ -227,12 +232,23 @@ namespace UsersAPIService.Controllers
             return Ok(userDto);
         }
 
+        [AllowAnonymous]
         [HttpPut("{id}")]
         public IActionResult Update(Guid id, [FromBody]UserDto userDto)
         {
             // map dto to entity and set id
             var user = _mapper.Map<Users>(userDto);
             user.Userid = id;
+
+            if (userDto.Password.ToString().Length <= 6)
+            {
+                return BadRequest(new { message = "Password must be longer than 6 characters." });
+            }
+
+            if (userDto.Password.ToString() != userDto.PasswordConfirm.ToString())
+            {
+                return BadRequest(new { message = "Password and confiramtion of password must be the same." });
+            }
 
             try
             {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UsersAPIService.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace UsersAPIService.Helpers
 {
@@ -29,7 +30,7 @@ namespace UsersAPIService.Helpers
             if (string.IsNullOrEmpty(Email) || string.IsNullOrEmpty(Password))
                 return null;
 
-            var user = _context.Users.SingleOrDefault(x => x.Email == Email);
+            var user = _context.Users.SingleOrDefault(x => x.Email.ToLower() == Email.ToLower());
 
             // check if username exists
             if (user == null)
@@ -55,13 +56,14 @@ namespace UsersAPIService.Helpers
 
         public Users Create(Users user, string password)
         {
+            user.Email = user.Email.ToLower();
             // validation
             if (string.IsNullOrWhiteSpace(password))
                 throw new AppException("Password is required");
 
-            if (_context.Users.Any(x => x.Email == user.Email))
+            if (_context.Users.Any(x => x.Email.ToLower() == user.Email.ToLower()))
             {
-                throw new AppException("Email \"" + user.Email + "\" is already registered");
+                throw new AppException("Email \"" + user.Email.ToLower() + "\" is already registered");
             }
 
             byte[] passwordHash, passwordSalt;
@@ -79,7 +81,7 @@ namespace UsersAPIService.Helpers
 
         public void Update(Users userParam, string password = null)
         {
-            var user = _context.Users.Find(userParam.Userid);
+            var user = _context.Users.SingleOrDefault(x => Convert.ToString(x.Userid) == userParam.Userid.ToString());
 
             if (user == null)
                 throw new AppException("User not found");
@@ -87,7 +89,7 @@ namespace UsersAPIService.Helpers
             if (userParam.Email != user.Email)
             {
                 // username has changed so check if the new username is already taken
-                if (_context.Users.Any(x => x.Email == userParam.Email))
+                if (_context.Users.Any(x => x.Email.ToLower() == userParam.Email.ToLower()))
                     throw new AppException("Email \"" + userParam.Email + "\" is already registered");
             }
 
@@ -106,7 +108,9 @@ namespace UsersAPIService.Helpers
                 user.PasswordSalt = passwordSalt;
             }
 
-            _context.Users.Update(user);
+            //_context.Users.Update(user);
+
+            _context.Entry(user).State = EntityState.Modified;
             _context.SaveChanges();
         }
 

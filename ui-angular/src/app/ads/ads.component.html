@@ -34,7 +34,6 @@
     </thead>
     <tbody>
         <tr *ngFor="let a of ads | paginate: { itemsPerPage: size, currentPage: page, totalItems: adsCount } | orderBy: 'createdAt'">
-            <ng-template [ngIf]="ad?.adid != a.adid" [ngIfElse]="edit">
 				<td class="col-md-2"><a class="btn btn-warning btn-xs btn-space" role="button" (click)="fullInfo(a);" class="nav-link"><span class="glyphicon glyphicon-info-sign"></span> View</a></td>
                 <td class="col-md-2">{{a?.caption}}</td>
 				<td class="col-md-2">{{a?.city}}</td>
@@ -59,7 +58,6 @@
 						
 					</swal>
 				</td>
-            </ng-template>
         </tr>
     </tbody>
 </table>
@@ -74,6 +72,22 @@
 </div>        
 
 </div>
+
+<swal
+	#saveSwal
+	title = "Successful action"
+	type="success">						
+</swal>
+
+<swal
+	#errorSwal
+	title = "Error"
+	text = "{{errorMsg}}"
+	type="error">
+<ng-container *swalPartial="swalTargets.text">
+<div style="display: table; margin: 0 auto;">{{errorMsg}}</div>
+</ng-container>	
+</swal>
 
 <!--шаблон для добавления-->
 <div *ngIf="createMode;">
@@ -190,7 +204,7 @@
 <!-- </form> -->
 	
 	<div>
-    <a class="btn btn-default btn-sm" (click)="cancel();" role="button"><span class="glyphicon glyphicon-chevron-left"></span> Return to list</a>
+    <a class="btn btn-default" (click)="cancel();" role="button"><span class="glyphicon glyphicon-chevron-left"></span> Return to list</a>
 	</div>
 	
 </div>
@@ -317,62 +331,6 @@
 </div>
 </div>
 
-<!-- Шаблон подробной информации -->
-<div *ngIf="fullInfoMode;">
-    <h2>{{ad.caption}}</h2>
-	<div class="row">
-	<div class="col-xs-12">
-        <p><b>Price:</b>		{{ad.price}} ₽</p>
-	</div>
-	</div>
-	<div class="row">
-	<div class="col-xs-6">
-        <p><b>City:</b>		{{ad.city}}</p>
-	</div>
-	<div class="col-xs-6">
-        <p><b>Address:</b>		{{ad.adress}}</p>
-	</div>
-	</div>
-	<div class="row">
-	<div class="col-xs-6">
-		<p><b>Type:	</b>{{ad.type}}</p>
-	</div>
-	<div class="col-xs-6">
-        <p><b>What is for rent:</b>		{{ad.whatRented}}</p>
-	</div>
-	</div>
-	<div class="row">
-	<div class="col-xs-6">
-        <p><b>Number of bedrooms:</b>		{{ad.bedrooms}}</p>
-	</div>
-	<div class="col-xs-6">
-        <p><b>Number of bathrooms:</b>		{{ad.bathrooms}}</p>
-	</div>
-	</div>
-	<div class="row">
-	<div class="col-xs-12">
-        <p><b>Description:</b>		{{ad.description}}</p>
-	</div>
-	</div>
-	<div class="row">
-	<div class="col-xs-12">
-        <p><b>Date of creation:</b>		{{ad.createdAt | date}}</p>
-	</div>
-	</div>
-	<div class="row">
-	<div class="col-xs-16">
-        <p><b>Booked dates:</b> </p>
-	</div>
-		<div class="col-xs-6">
-        <a class="btn btn-default btn-sm" (click)="bookingForm()" role="button"><span class="glyphicon glyphicon-book"></span> Make booking</a>
-	</div>
-	</div>
-	
-	<div>
-    <a class="btn btn-default btn-sm" (click)="cancel(ad)" role="button"><span class="glyphicon glyphicon-chevron-left"></span> Return to list</a>
-	</div>	
-</div>
-
 <!-- Шаблон бронирования -->
 <div *ngIf="bookingMode;">
 <h2>{{ad.caption}}</h2>
@@ -441,20 +399,85 @@
 	</form>
 </div>
 
-
-
+<!-- Шаблон подробной информации -->
+<div *ngIf="fullInfoMode;">
+	<div class="row">
+	<div class="col-xs-6">
+    <h2>{{ad.caption}}</h2>
+	</div>
+		<ng-template [ngIf]="(currentUser?.userid == ad.userid) || (currentUser?.roles.includes('Admin'))">
+		<div class="col-xs-1">
+		<a class="btn btn-warning btn-xs btn-space" (click)="editad(ad)" role="button"><span class="glyphicon glyphicon-pencil"></span> Edit</a>
+		</div>
+		<div class="col-xs-1">
+		<a class="btn btn-danger btn-xs" (click)="deleteSwal.show()" role="button"><span class="glyphicon glyphicon-remove"></span> Delete</a>
+		</div>
 		<swal
-			#saveSwal
-			title = "Successful action"
-			type="success">						
+						#deleteSwal
+						title = "Delete ad {{ad?.caption}}?"
+						text="This cannot be undone."
+						type="warning"
+						[showCancelButton]="true"
+						[focusCancel]="true"
+						(confirm)="delete(ad)"
+						(cancel)="cancel()">
+						
 		</swal>
-<swal
-	#errorSwal
-	title = "Error"
-	text = "{{errorMsg}}"
-	type="error">
-<ng-container *swalPartial="swalTargets.text">
-<div style="display: table; margin: 0 auto;">{{errorMsg}}</div>
-</ng-container>	
-</swal>
+	</ng-template>	
+	</div>
+	<div class="row">
+	<div class="col-xs-12">
+        <p><b>Price:</b>		{{ad.price}} ₽</p>
+	</div>
+	</div>
+	<div class="row">
+	<div class="col-xs-6">
+        <p><b>City:</b>		{{ad.city}}</p>
+	</div>
+	<div class="col-xs-6">
+        <p><b>Address:</b>		{{ad.adress}}</p>
+	</div>
+	</div>
+	<div class="row">
+	<div class="col-xs-6">
+		<p><b>Type:	</b>{{ad.type}}</p>
+	</div>
+	<div class="col-xs-6">
+        <p><b>What is for rent:</b>		{{ad.whatRented}}</p>
+	</div>
+	</div>
+	<div class="row">
+	<div class="col-xs-6">
+        <p><b>Number of bedrooms:</b>		{{ad.bedrooms}}</p>
+	</div>
+	<div class="col-xs-6">
+        <p><b>Number of bathrooms:</b>		{{ad.bathrooms}}</p>
+	</div>
+	</div>
+	<div class="row">
+	<div class="col-xs-12">
+        <p><b>Description:</b>		{{ad.description}}</p>
+	</div>
+	</div>
+	<div class="row">
+	<div class="col-xs-12">
+        <p><b>Date of creation:</b>		{{ad.createdAt | date}}</p>
+	</div>
+	</div>
+	<div class="row">
+	<div class="col-xs-12">
+        <p><b>Booked dates:</b></p> <div *ngFor="let bk of bookings | orderBy: 'departureDate'"> {{bk?.arrivalDate | date}} - {{bk?.departureDate | date}} </div>
+		<ng-template [ngIf]="bookingsUndefined">
+		<div>No bookings found for this Ad. You can be the first!</div>
+		</ng-template>
+	</div>
+	<div class="row">	
+	<div class="col-xs-6">
+		<a class="btn btn-default" (click)="cancel()" role="button"><span class="glyphicon glyphicon-chevron-left"></span> Return to list</a>
+	</div>
+	<div class="col-xs-6">
+        <a class="btn btn-default" (click)="bookingForm()" role="button"><span class="glyphicon glyphicon-book"></span> Make booking</a>
+	</div>
+	</div>		
+</div>
  
