@@ -1,11 +1,12 @@
 ﻿export class User {
-    userid: string;
-	name: string;
-    surname: string;
-    email: string;
-    password: string;
-	passwordConfirm: string;
-	dateOfBirth: Date;
-	isAdmin: boolean;
-	isRentlord: boolean;
+	constructor(
+    public userid?: string,
+	public name?: string,
+    public surname?: string,
+    public email?: string,
+    public password?: string,
+	public passwordConfirm?: string,
+	public dateOfBirth?: Date,
+	public isAdmin?: boolean,
+	public isRentlord?: boolean) {}
 }

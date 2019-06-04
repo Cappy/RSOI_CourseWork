@@ -38,7 +38,7 @@ export class BookingsService {
     }
     updateBooking(booking: Booking) {
   
-        return this.http.put(this.url + '/' + booking.bookingId, booking, { observe: 'response', responseType: 'text' });
+        return this.http.put(this.url + '/' + booking.bookingid, booking, { observe: 'response', responseType: 'text' });
     }
     deleteBooking(bookingId: string) {
         return this.http.delete(this.url + '/' + bookingId);

@@ -6,7 +6,7 @@ export class BookingFull {
 		public bookingid?: string,
         public user?: User,
         public ad?: Ad,
-		public bookedPrice?: int,
+		public bookedPrice?: number,
 		public arrivalDate?: Date,
         public departureDate?: Date,
         public createdAt?: Date

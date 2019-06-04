@@ -87,9 +87,9 @@ export class AdsComponent implements OnInit {
 		this.submitted = true;
 
         // stop here if form is invalid
-        if (this.bookingF.invalid) {
-            return;
-        }
+        // if (this.bookingF.invalid) {
+            // return;
+        // }
 		this.loading = true;
         this.bookingsService.createBooking(this.bookingF.value)
             .pipe(first())

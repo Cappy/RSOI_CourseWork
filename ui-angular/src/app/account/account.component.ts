@@ -55,7 +55,7 @@ export class AccountComponent implements OnInit {
 		this.normalMode = false;
 		this.editMode = true;
 		this.userService.getById(this.currentUser.userid).pipe(first())
-            .subscribe((data: User[]) => {
+            .subscribe((data: any) => {
 				this.f.name.setValue(data.name);
 				this.f.surname.setValue(data.surname);
 				this.f.email.setValue(data.email);
@@ -79,9 +79,9 @@ export class AccountComponent implements OnInit {
 		this.submitted = true;
 
         // stop here if form is invalid
-        if (this.changeForm.invalid) {
-            return;
-        }
+        // if (this.changeForm.invalid) {
+            // return;
+        // }
 		this.loading = true;
 		this.userService.update(this.changeF.value).subscribe(data => {
 			this.alertService.success('Information updated successfuly', true);	

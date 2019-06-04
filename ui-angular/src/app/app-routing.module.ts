@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { HomeComponent } from './home/home.component';
-import { CustomersComponent } from './customers/customers.component';
+// import { CustomersComponent } from './customers/customers.component';
 import { AdsComponent } from './ads/ads.component';
 import { BookingsComponent } from './bookings/bookings.component';
 
@@ -16,7 +16,7 @@ import { HttpModule } from '@angular/http';
 const routes: Routes = [
   { path: '', component: AdsComponent, canActivate: [AuthGuard] },
  // { path: '', component: HomeComponent, canActivate: [AuthGuard] },
-  { path: 'customers', component: CustomersComponent, canActivate: [AuthGuard] },
+  // { path: 'customers', component: CustomersComponent, canActivate: [AuthGuard] },
   { path: 'ads', component: AdsComponent, canActivate: [AuthGuard] },
   { path: 'bookings', component: BookingsComponent, canActivate: [AuthGuard] },
   //{ path: 'booking', component: BookingsComponent, canActivate: [AuthGuard] },

@@ -1,0 +1,12 @@
+C:\Users\cappy\Documents\GitHub\RSOI_CourseWork\UsersAPIService\AdsAPIService\bin\Release\netcoreapp2.0\AdsAPIService.deps.json
+C:\Users\cappy\Documents\GitHub\RSOI_CourseWork\UsersAPIService\AdsAPIService\bin\Release\netcoreapp2.0\AdsAPIService.runtimeconfig.json
+C:\Users\cappy\Documents\GitHub\RSOI_CourseWork\UsersAPIService\AdsAPIService\bin\Release\netcoreapp2.0\AdsAPIService.runtimeconfig.dev.json
+C:\Users\cappy\Documents\GitHub\RSOI_CourseWork\UsersAPIService\AdsAPIService\bin\Release\netcoreapp2.0\AdsAPIService.dll
+C:\Users\cappy\Documents\GitHub\RSOI_CourseWork\UsersAPIService\AdsAPIService\bin\Release\netcoreapp2.0\AdsAPIService.pdb
+C:\Users\cappy\Documents\GitHub\RSOI_CourseWork\UsersAPIService\AdsAPIService\obj\Release\netcoreapp2.0\AdsAPIService.csprojAssemblyReference.cache
+C:\Users\cappy\Documents\GitHub\RSOI_CourseWork\UsersAPIService\AdsAPIService\obj\Release\netcoreapp2.0\AdsAPIService.csproj.CoreCompileInputs.cache
+C:\Users\cappy\Documents\GitHub\RSOI_CourseWork\UsersAPIService\AdsAPIService\obj\Release\netcoreapp2.0\UserSecretsAssemblyInfo.cs
+C:\Users\cappy\Documents\GitHub\RSOI_CourseWork\UsersAPIService\AdsAPIService\obj\Release\netcoreapp2.0\AdsAPIService.AssemblyInfoInputs.cache
+C:\Users\cappy\Documents\GitHub\RSOI_CourseWork\UsersAPIService\AdsAPIService\obj\Release\netcoreapp2.0\AdsAPIService.AssemblyInfo.cs
+C:\Users\cappy\Documents\GitHub\RSOI_CourseWork\UsersAPIService\AdsAPIService\obj\Release\netcoreapp2.0\AdsAPIService.dll
+C:\Users\cappy\Documents\GitHub\RSOI_CourseWork\UsersAPIService\AdsAPIService\obj\Release\netcoreapp2.0\AdsAPIService.pdb

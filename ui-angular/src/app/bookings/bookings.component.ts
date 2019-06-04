@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { BookingsService } from './bookings.service';
 
-import { CustomersService } from './../customers/customers.service';
-import { RoomsService } from './../rooms/rooms.service';
+// import { CustomersService } from './../customers/customers.service';
+// import { RoomsService } from './../rooms/rooms.service';
 
-import { Customer } from './../customers/customer';
-import { Room } from './../rooms/room';
+// import { Customer } from './../customers/customer';
+// import { Room } from './../rooms/room';
 
 import { User } from '../_models';
 
@@ -25,7 +25,7 @@ import { SwalPartialTargets } from '@toverux/ngx-sweetalert2';
   selector: 'app-bookings',
   templateUrl: './bookings.component.html',
   styleUrls: ['./bookings.component.scss'],
-  providers: [BookingsService, CustomersService, RoomsService]
+  providers: [BookingsService]
 })
 export class BookingsComponent implements OnInit {
 
@@ -33,12 +33,9 @@ export class BookingsComponent implements OnInit {
   bookings: Booking[];                
   
   errorMsg;
-  customer: Customer = new Customer();   
-  customers: Customer[]; 
+
   
-  room: Room = new Room();
-  rooms: Room[]; 
-  
+
   bookingsCount: number;
   tableMode: boolean = true;    // табличный режим
   
@@ -54,8 +51,6 @@ export class BookingsComponent implements OnInit {
   @ViewChild('errorSwal') private errorSwal: SwalComponent;
   
   constructor(private bookingsService: BookingsService,
-  private customersService: CustomersService,
-  private roomsService: RoomsService,
   private route: ActivatedRoute, private router: Router,
   private formBuilder: FormBuilder, public readonly swalTargets: SwalPartialTargets) 
   {
@@ -121,18 +116,6 @@ ngOnInit() {
 		this.cancel();
 		this.saveSwal.show();
 	}
- 
-    editBooking(b) { //b -- букинг со всеми полями, мы выбираем только нужные нам для модели
-		this.roomsService.getAllRooms()
-            .subscribe((data: Room[]) => this.rooms = data);
-		this.customersService.getAllCustomers()
-            .subscribe((data: Customer[]) => this.customers = data);
-			
-        this.booking.bookingId = b.bookingId;
-		this.booking.roomId = b.room.roomId;
-		this.booking.customerId = b.customer.customerId;
-    }
-
 	
     cancel() {
 		console.log(this.bookings);
@@ -156,12 +139,7 @@ ngOnInit() {
     }
 	
     add() {
-		this.bookinginfo = false;
-		this.roomsService.getAllRooms()
-            .subscribe((data: Room[]) => this.rooms = data);
-		this.customersService.getAllCustomers()
-            .subscribe((data: Customer[]) => this.customers = data);
-        this.tableMode = false;
+
     }
 	
 }

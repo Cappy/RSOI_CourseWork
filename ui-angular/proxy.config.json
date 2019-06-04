@@ -1,8 +1,8 @@
 {
     "/api/*": {
-        "target": "http://localhost:9010/",
+        "target": "https://gateway20190603104549.azurewebsites.net/",
         "secure": false,
         "logLevel": "debug",
-		"pathRewrite": {"http://localhost:4200/" : "http://localhost:9010/"}
+		"changeOrigin": true
     }
 }
