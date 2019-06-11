@@ -127,6 +127,16 @@ namespace BookingsAPIService.Controllers
                 return BadRequest("Departure date can't be less than arrival date.");
             }
 
+            if (booking.ArrivalDate < DateTime.Now)
+            {
+                return BadRequest("Arrival date can't be less than current date.");
+            }
+
+            if (booking.ArrivalDate > DateTime.Today.AddYears(2))
+            {
+                return BadRequest("Maximum arrival date for booking is current date plus two years. Maximum arrival date for today is: " + DateTime.Today.AddYears(2).Date);
+            }
+
             booking.CreatedAt = DateTime.Now;
 
 

@@ -49,8 +49,19 @@ namespace UsersAPIService.Controllers
                 return BadRequest(new { message = "Password and confiramtion of password must be the same." });
             }
 
+            if (userDto.DateOfBirth < DateTime.Parse("1900-01-01"))
+            {
+                return BadRequest(new { message = "Please enter a valid date. Minimal date is 01.01.1900." });
+            }
+
+            if (userDto.DateOfBirth >= DateTime.Now)
+            {
+                return BadRequest(new { message = "Please enter a valid date. Date of birth cannot be greater than current date." });
+            }
+
             Guid id = Guid.NewGuid();
             userDto.Userid = id;
+            userDto.IsRentlord = true;
 
             // map dto to entity
             var user = _mapper.Map<Users>(userDto);
@@ -78,6 +89,7 @@ namespace UsersAPIService.Controllers
 
             if (identity == null)
             {
+                Response.Headers.Add("Access-Control-Allow-Origin", "*");
                 Response.StatusCode = 400;
                 await Response.WriteAsync("Invalid email or password.");
                 return;
@@ -142,7 +154,8 @@ namespace UsersAPIService.Controllers
             if (string.IsNullOrEmpty(Email) || string.IsNullOrEmpty(Password))
                 return null;
 
-            var user = _context.Users.SingleOrDefault(x => Convert.ToString(x.Email).ToLower() == Email.ToLower());
+            var user = _userService.Authenticate(Email, Password);
+
 
             if (user != null)
             {
@@ -250,6 +263,16 @@ namespace UsersAPIService.Controllers
                 return BadRequest(new { message = "Password and confiramtion of password must be the same." });
             }
 
+            if (userDto.DateOfBirth < DateTime.Parse("1900-01-01"))
+            {
+                return BadRequest(new { message = "Please enter a valid date. Minimal date is 01.01.1900." });
+            }
+
+            if (userDto.DateOfBirth >= DateTime.Now)
+            {
+                return BadRequest(new { message = "Please enter a valid date. Date of birth cannot be greater than current date." });
+            }
+
             try
             {
                 // save 
@@ -262,6 +285,7 @@ namespace UsersAPIService.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
+
 
         [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]

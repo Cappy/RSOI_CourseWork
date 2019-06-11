@@ -104,6 +104,46 @@ namespace Gateway.Controllers
             HttpResponseMessage bookingsOfUser = null;
             HttpResponseMessage bookingsOfAd = null;
 
+            if(bookingModel.ArrivalDate == null || bookingModel.DepartureDate == null)
+            {
+                return StatusCode(StatusCodes.Status400BadRequest, new
+                {
+                    err = "Invalid date."
+                });
+            }
+
+            if (bookingModel.ArrivalDate >= bookingModel.DepartureDate)
+            {
+                return StatusCode(StatusCodes.Status400BadRequest, new
+                {
+                    err = "Departure date can't be less than arrival date."
+                });
+            }
+
+            if (bookingModel.ArrivalDate < DateTime.Now)
+            {
+                return StatusCode(StatusCodes.Status400BadRequest, new
+                {
+                    err = "Arrival date can't be less than current date."
+                });
+            }
+
+            if (bookingModel.ArrivalDate > DateTime.Today.AddYears(2))
+            {
+                return StatusCode(StatusCodes.Status400BadRequest, new
+                {
+                    err = "Maximum arrival date for booking is current date plus two years. Maximum arrival date for today is: " + DateTime.Today.AddYears(2).Date
+                });
+            }
+
+            if (bookingModel.DepartureDate > DateTime.Today.AddYears(3))
+            {
+                return StatusCode(StatusCodes.Status400BadRequest, new
+                {
+                    err = "Maximum departure date for booking is current date plus three years. Maximum departure date for today is: " + DateTime.Today.AddYears(3).Date
+                });
+            }
+
 
             try
             {
@@ -134,9 +174,6 @@ namespace Gateway.Controllers
 
             foreach (var entry in BookingsOfAd)
             {
-                //if ((entry.ArrivalDate >= bookingModel.ArrivalDate && entry.ArrivalDate <= bookingModel.DepartureDate && entry.DepartureDate >= bookingModel.DepartureDate) ||
-                //    (entry.ArrivalDate <= bookingModel.ArrivalDate && entry.DepartureDate >= bookingModel.ArrivalDate && entry.DepartureDate >= bookingModel.DepartureDate) ||
-                //    (entry.ArrivalDate <= bookingModel.ArrivalDate && entry.ArrivalDate <= bookingModel.DepartureDate && entry.DepartureDate <= bookingModel.DepartureDate))
                 if ((bookingModel.ArrivalDate <= entry.ArrivalDate && entry.ArrivalDate <= bookingModel.DepartureDate && bookingModel.DepartureDate <= entry.DepartureDate && bookingModel.ArrivalDate <= entry.DepartureDate) ||
                     (entry.ArrivalDate <= bookingModel.ArrivalDate && bookingModel.ArrivalDate <= entry.DepartureDate && bookingModel.DepartureDate <= entry.DepartureDate && bookingModel.DepartureDate >= entry.ArrivalDate) ||
                     (entry.ArrivalDate <= bookingModel.ArrivalDate && bookingModel.ArrivalDate <= entry.DepartureDate && entry.DepartureDate <= bookingModel.DepartureDate && entry.ArrivalDate <= bookingModel.DepartureDate) ||
@@ -171,10 +208,9 @@ namespace Gateway.Controllers
 
             if (booking.StatusCode == System.Net.HttpStatusCode.BadRequest)
             {
-                return StatusCode(StatusCodes.Status400BadRequest, new
-                {
-                    err = "Departure date can't be less than arrival date."
-                });
+                var message = booking.Content.ReadAsAsync<ErrorMessage>().Result;
+                return BadRequest(new { err = message });
+
             }
 
             //return Ok(client.GetStringAsync(customersAPI + $"/{customerModel.CustomerId}"));

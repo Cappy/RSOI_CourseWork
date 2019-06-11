@@ -27,7 +27,6 @@ namespace BookingsAPIService
         {
 
             services.AddCors();
-
             //services.AddDbContext<BookingContext>(options =>
             //        options.UseMySql(Configuration.GetConnectionString("DefaultConnection")));
             var connection = @"server=46.254.21.136; port=3306; database=p460741_rsoi; user=p460741_pavel; password=2M8p8B0c";
